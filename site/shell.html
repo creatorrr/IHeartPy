@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<!--//Meta Info// -->
+		<meta name="description" content="IHeartPy - Your friendly next-door Python Instructor!">
+		<meta name="author" content="Diwank Singh Tomer - me [at] thediwank [dot] in">
+
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<meta id="shellSessionId" content= "{{ session }}" />
+
+
+		<!--//Title// -->
+		<title>I &hearts; Py - {{ title }}</title>
+
+		<!--//Stylesheets// -->
+		<link rel="stylesheet" media="screen" href="/css/style.css">
+
+		<link rel="stylesheet" media="screen" href="/css/codemirror/codemirror.css">
+		<link rel="stylesheet" media="screen" href="/css/codemirror/theme/neat.css">
+		<link rel="stylesheet" media="screen" href="/css/codemirror/theme/night.css">
+		
+		<!--//Scripts// -->
+		<script type="text/javascript" src="/js/codemirror/codemirror.js"></script>
+		<script type="text/javascript" src="/js/codemirror/mode/python.js"></script>
+
+		<!--//Misc// -->
+		<link rel="shortcut icon" href="/images/favicon.ico">
+		<link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
+
+	</head>
+
+	<body onload="shellInit();return false;">
+		<!--//MastHead// -->
+		<div class="header">
+			<a href="/"><h1>I Heart Py!</h1></a>
+			<h2> &hearts; The lovable Python Interpreter. &hearts; </h2>
+
+			<blockquote>{{ quotation }} - <em>{{ quotation_author }}</em> <a href="{{ quotation_link }}"> [^] </a> </blockquote>
+
+			<span id="notifications"> <a href="http://iheartpy.uservoice.com/">{{ notifications }}</a> </span>
+
+		</div>
+
+		<!--//Editor// -->
+		<div class="editor">
+			<h3> Python Interactive Shell </h3>
+			<span id="shellLOL" class="off" onclick="toggleLOL();return false;">LOL</span><span class="off" onclick="toggleTheme();return false;">theme</span><span onclick="printer(shellDisplay.getValue());" class="off">print</span><span onclick="shellDisplay.setValue('');return false;" class="off">clear</span>
+			
+			<form class="display" id="shell-display"><textarea id="display" readonly>{{ server_software }}
+Python {{ python_version }}</textarea></form>
+
+			<span id="shellLOL1" class="off" onclick="toggleLOL();return false;">LOL</span><span class="off" onclick="toggleTheme();return false;">theme</span><span onclick="printer(shellDisplay.getValue());" class="off">print</span><span onclick="shellDisplay.setValue('');return false;" class="off">clear</span>
+			<form class="prompt" id="shell-prompt"><textarea id="prompt">#Type Away!</textarea></form>
+
+		</div>
+
+		<hr></hr>
+
+		<!--//Footer// -->
+		<div class="footer">
+			<div class="links">
+				<span>
+				{% if user %}
+					<a href="{{ logout_url }}"> Adios,  {{ user.nickname }} !</a>
+				{% else %}
+					<a href="{{ login_url }}"> Hola! Login?</a>
+				{% endif %}
+					<a href="/resources">Resources</a>
+					<a href="/instructions"> Instructions </a>
+				</span>
+
+			</div>
+
+
+			<span class="copyright"> Copyright-(2010-12) Creatorrr! Labs <a href="/license.txt"> [^] </a> </span>
+
+		</div>
+
+		<!--//ExecuteOnLoad// -->
+		<script type="text/javascript" src="/js/shell.js"></script>
+
+		<!--//Google Analytics// -->
+		<script type="text/javascript">
+
+		  var _gaq = _gaq || [];
+		  _gaq.push(['_setAccount', 'UA-25004086-1']);
+		  _gaq.push(['_setDomainName', '1heartpy.appspot.com']);
+		  _gaq.push(['_setAllowHash', 'false']);
+		  _gaq.push(['_trackPageview']);
+		
+		  (function() {
+		    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		  })();
+		
+		</script>
+
+	</body>
+
+</html>
