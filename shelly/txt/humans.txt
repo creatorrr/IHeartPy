@@ -1,0 +1,31 @@
+/* the humans responsible & colophon */
+/* humanstxt.org */
+
+/* APP */
+  What?: IHeartPy - Your friendly next-door Python Instructor!
+  Why?: For the true Python lovers... Only for the truly "interpreted" at heart.
+  How?: Google App Engine Goodness!!!
+
+/* TEAM */
+  The Bug Fixer: Diwank Singh Tomer
+  Site: http://thediwank.in
+  Twitter: http://twitter.com/meetdagod
+  Location: New Delhi, India
+
+  Inspiration: Ila Nitin Gokarn
+  Location: Singapore Management University, Singapore
+  
+  More: So many more friends, beta-testers, critics. Thanks a ton, guys!
+  
+/* THANKS */
+  Names (& URL): Sydney George Hopkins(http://en.wikipedia.org/wiki/Mister_God,_This_Is_Anna#Author),
+                People at Google (http://google.com),
+                App-Engine (http://code.google.com/appengine),
+                Python (http://python.org),
+                Cort Stratton (http://pyaiml.sourceforge.net/),
+                Marijn Haverbeke (http://github.com/marijnh/CodeMirror2)
+
+/* SITE */
+  Standards: HTML5, CSS3
+  Components: jQuery, CodeMirror
+  Software: Python, App-Engine, PyAIML

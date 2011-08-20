@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<!--//Meta Info// -->
+		<meta name="description" content="IHeartPy - Your friendly next-door Python Instructor!">
+		<meta name="author" content="Diwank Singh Tomer - me [at] thediwank [dot] in">
+
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+		<!--//Title// -->
+		<title>I &hearts; Py - {{ title }}</title>
+
+		<!--//Stylesheets// -->
+		<link rel="stylesheet" media="screen" href="/css/style.css">
+		<link rel="stylesheet" media="handheld" href="/css/handheld.css">
+
+
+		<!--//Misc// -->
+		<link rel="shortcut icon" href="/images/favicon.ico">
+		<link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
+
+	</head>
+
+	<body>
+		<!--//MastHead// -->
+		<div class="header">
+			<a href="/"><h1>I Heart Py!</h1></a>
+			<h2> &hearts; The lovable Python Interpreter. &hearts; </h2>
+
+			<blockquote>{{ quotation }} - <em>{{ quotation_author }}</em> <a href="{{ quotation_link }}"> [^] </a> </blockquote>
+
+			<span id="notifications"> <a href="http://iheartpy.uservoice.com/">Feedback</a> </span>
+
+		</div>
+
+		<hr></hr>
+
+		<!--//Links// -->
+		<div class="options">
+			<span class="bar">
+				<span> Get Started. </span>
+				<em>Ship's On Sail, Cap'n!</em>
+				{% if user %}
+					<a href="/shell"> proceed </a>
+				{% else %}
+					<a href="{{ login_url }}"> login </a>
+				{% endif %}
+
+			</span>
+
+			<br/>
+
+			<span class="bar">
+				<span> Human? </span>
+				<em>You Can Go Here...</em>
+				<a href="/humans.txt">&hearts;</a>
+				<a href="http://google.com/+" target="_blank">+</a>
+				<a href="http://www.facebook.com/sharer.php?s=100&p[title]=IHeartPy&p[url]=http://1heartpy.appspot.com/&p[summary]=The lovable Python Interpreter" target="_blank">f</a>
+				<a href="https://www.twitter.com/share?url=http://1heartpy.appspot.com/&text=I Heart Py&via=meetdagod" target="_blank">t</a>
+				<a href="http://news.ycombinator.com" target="_blank">h</a>
+
+			</span>
+
+			<br/>
+
+			<span class="bar">
+				<span> Robot? </span>
+				<em>Need I Really Ask? Sigh.</em>
+				<a href="/robots.txt">&raquo;</a>
+
+			</span>
+
+			<br/>
+
+			<span class="bar">
+				<span> Hacker? </span>
+				<em>Would love to meet you!</em>
+				<a href="/hackers.txt">&spades;</a>
+				<a href="http://linkedin.com/in/meetdagod" target="_blank">in</a>
+				<a href="http://github.com/creatorrr" target="_blank">GitHub</a>
+
+			</span>
+
+		</div>
+
+		<hr></hr>
+
+		<!--//Footer// -->
+		<div class="footer">
+			<div class="links">
+				<span>
+				{% if user %}
+					<a href="/shell"> Go to Shell! </a>
+				{% else %}
+					<a href="{{ login_url }}"> Hola! Login? </a>
+				{% endif %}
+					<a href="/resources"> Resources </a>
+					<a href="/instructions"> Instructions </a>
+				</span>
+
+			</div>
+
+
+			<span class="copyright"> Copyright-(2010-12) Creatorrr! Labs <a href="/license.txt"> [^] </a> </span>
+
+		</div>
+
+		<!--//ExecuteOnLoad// -->
+
+
+		<!--//Google Analytics// -->
+		<script>
+			var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']]; // Change UA-XXXXX-X to be your site's ID
+			(function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];g.async=1;
+			g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+			s.parentNode.insertBefore(g,s)}(document,'script'));
+		</script>
+
+	</body>
+
+</html>
