@@ -21,7 +21,7 @@ handlers:
   script: main.py
   secure: always
 
-- url: /zipme
+- url: /download
   script: zipme.py
 
 - url: /shell
@@ -61,28 +61,28 @@ handlers:
   expiration: "30d"
 
 
-- url: /stats.*
+- url: /stats
   script: $PYTHON_LIB/google/appengine/ext/appstats/ui.py
   #appstats
   login: admin
   secure: always
   auth_fail_action: redirect
 
-- url: /admin.*
+- url: /_ah/admin
   script: $PYTHON_LIB/google/appengine/ext/admin
   #admin console
   login: admin
   secure: always
   auth_fail_action: redirect
 
-- url: /connector.*
+- url: /connector
   script: $PYTHON_LIB/google/appengine/ext/remote_api/handler.py
 #remote script connector
   login: admin
   secure: always
   auth_fail_action: unauthorized
 
-- url: /data.*
+- url: /data
   script: $PYTHON_LIB/google/appengine/ext/datastore_admin
   #data admin
   login: admin
