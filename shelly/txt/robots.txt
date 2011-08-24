@@ -12,4 +12,3 @@ Disallow: /harm/to/self
 Allow: /
 Allow: /resources
 Allow: /instructions
-Allow: /download

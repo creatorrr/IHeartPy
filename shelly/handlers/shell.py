@@ -35,6 +35,9 @@ import sys
 import traceback
 import types
 import wsgiref.handlers
+
+sys.path.append(os.path.abspath(''))
+
 import lolpython
 
 try:
@@ -191,7 +194,7 @@ class FrontPageHandler(webapp.RequestHandler):
       session.unpicklables = [db.Text(line) for line in INITIAL_UNPICKLABLES]
       session_key = session.put()
 
-    template_file = os.path.join(os.path.dirname(__file__), 'site','shell.html')
+    template_file = os.path.abspath('../site/shell.html')
     session_url = '/shell'
 
     notifications="Hola, &#223;-Tester! Rough Seas ahead..."

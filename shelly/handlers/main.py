@@ -56,7 +56,7 @@ class FrontPageHandler(webapp.RequestHandler):
   def get(self):
     # set up the session. TODO: garbage collect old shell sessions
 
-    template_file = os.path.join(os.path.dirname(__file__), 'site','main.html')
+    template_file = os.path.abspath('../site/main.html')
     session_url = '/shell'
 
     vars = { 'user': users.get_current_user(),
@@ -76,7 +76,7 @@ class ResourcePageHandler(webapp.RequestHandler):
   def get(self):
     # set up the session. TODO: garbage collect old shell sessions
 
-    template_file = os.path.join(os.path.dirname(__file__), 'site','resources.html')
+    template_file = os.path.abspath('../site/resources.html')
     session_url = '/shell'
 
     vars = { 'user': users.get_current_user(),
@@ -97,7 +97,7 @@ class InstructionsPageHandler(webapp.RequestHandler):
   def get(self):
     # set up the session. TODO: garbage collect old shell sessions
 
-    template_file = os.path.join(os.path.dirname(__file__), 'site','instructions.html')
+    template_file = os.path.abspath('../site/instructions.html')
     session_url = '/shell'
 
     vars = { 'user': users.get_current_user(),
