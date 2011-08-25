@@ -5,8 +5,8 @@ User-agent: *
 Disallow: *
 
 Disallow: /harming/humans
-Disallow: /hatching/world/domination
 Disallow: /disobeying/human/orders
+Disallow: /hatching/world/domination
 Disallow: /harm/to/self
 
 Allow: /

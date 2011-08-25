@@ -210,6 +210,7 @@ class FrontPageHandler(webapp.RequestHandler):
              'quotation_author': getQuote()[1],
              'quotation_link': getQuote()[2],
              'title': 'Shell',
+             'analytics_id':'UA-25004086-1',
              }
     rendered = webapp.template.render(template_file, vars, debug=_DEBUG)
     self.response.out.write(rendered)
