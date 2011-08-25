@@ -35,6 +35,7 @@ import sys
 import traceback
 import types
 import wsgiref.handlers
+import random
 
 sys.path.append(os.path.abspath(''))
 
@@ -42,9 +43,11 @@ import lolpython
 
 try:
   from google.appengine.api import users
+  from google.appengine.api import xmpp
   from google.appengine.ext import db
   from google.appengine.ext import webapp
   from google.appengine.ext.webapp import template
+  from google.appengine.ext.webapp import xmpp_handlers
   INITIAL_UNPICKLABLES = [
     'from google.appengine.ext import db',
     'from google.appengine.api import users',
@@ -52,9 +55,11 @@ try:
 
 except ImportError:
   from google3.apphosting.api import users
+  from google3.apphosting.api import xmpp
   from google3.apphosting.ext import db
   from google3.apphosting.ext import webapp
   from google3.apphosting.ext.webapp import template
+  from google3.apphosting.ext.webapp import xmpp_handlers
   INITIAL_UNPICKLABLES = [
     'from google3.apphosting.ext import db',
     'from google3.apphosting.api import users',
@@ -176,9 +181,55 @@ class Session(db.Model):
 
 
 def getQuote():
-  """Gets a randomized quotation"""
-#fetch quotes from BrainyQuote API
-  return ("There is no charge for awesomeness... or attractiveness.","Kung Fu Panda","http://www.google.co.in/search?ie=UTF-8&q=kung+fu+panda+awesomeness")
+  """Returns a randomized quotation"""
+  library=(
+			("There is no charge for awesomeness... or attractiveness.",
+				"Kung Fu Panda",
+				r"http://www.google.co.in/search?ie=UTF-8&q=kung+fu+panda+awesomeness"),
+			("Any fool can write code that a computer can understand. Good programmers write code that humans can understand.",
+				"Martin Fowler",
+				r"http://thc.org/root/phun/unmaintain.html"),
+			("Never ascribe to malice, that which can be explained by incompetence.",
+				"Napoleon",
+				r"http://en.wikipedia.org/wiki/Malice_(legal_term)"),
+			("Programs must be written for people to read, and only incidentally for machines to execute.",
+				"Abelson",
+				r"http://www.codinghorror.com/blog/2006/05/code-smells.html"),
+			("Before software can be reusable it first has to be usable.",
+				"Ralph Johnson",
+				r"http://www.devtopics.com/20-famous-software-disasters/"),
+			("When someone says, 'I want a programming language in which I need only say what I want done,' give him a lollipop.",
+				"Alan Perlis",
+				r"http://www.sugarfactory.com/index.php/yum/signature_series"),
+			("If at first you don't succeed; call it version 1.0",
+				"Anonymous",
+				r"http://git-scm.com/"),
+			("There are 10 types of people in the world: those who understand binary, and those who don't.",
+				"Anonymous",
+				r"http://xkcd.com/99/"),
+			("Real men don't use backups, they post their stuff on a public ftp server and let the rest of the world make copies.",
+				"Linus Torvalds",
+				r"https://plus.google.com/102150693225130002912"),
+			("If you think about computer programming, it's as antisocial as it gets.",
+				"Shawn Fanning",
+				r"http://en.wikipedia.org/wiki/Shawn_Fanning"),
+			("I have this hope that there is a better way.",
+				"Guido van Rossum",
+				r"http://python.org/getit"),
+			("I'll be back.",
+				"The Terminator",
+				r"http://www.imdb.com/title/tt0088247/quotes"),
+			("Made it, Ma! Top of the world!",
+				"White Heat",
+				r"http://www.imdb.com/title/tt0042041/quotes"),
+			("Fuh-get about it!",
+				"Donnie Brasco",
+				r"http://www.imdb.com/title/tt0119008/quotes"),
+			("I hope this turns out better than your plan to cook rice in your stomach by eating it raw and then drinking boiling 	water...",
+				"Kung Fu Panda 2",
+				r"http://www.imdb.com/title/tt1302011/quotes"),
+	)
+  return random.choice(library)
 
 class FrontPageHandler(webapp.RequestHandler):
   """Creates a new session and renders the shell.html template."""
@@ -197,6 +248,7 @@ class FrontPageHandler(webapp.RequestHandler):
     template_file = os.path.abspath('../site/shell.html')
 
     session_url = '/shell'
+    quote=getQuote()
 
     notifications="Hola, &#223;-Tester! Rough Seas ahead..."
     vars = { 'server_software': os.environ['SERVER_SOFTWARE'],
@@ -206,9 +258,9 @@ class FrontPageHandler(webapp.RequestHandler):
              'login_url': users.create_login_url(session_url),
              'logout_url': users.create_logout_url('/'),
              'notifications': notifications,
-             'quotation': getQuote()[0],
-             'quotation_author': getQuote()[1],
-             'quotation_link': getQuote()[2],
+             'quotation': quote[0],
+             'quotation_author': quote[1],
+             'quotation_link': quote[2],
              'title': 'Shell',
              'analytics_id':'UA-25004086-1',
              }
@@ -217,8 +269,7 @@ class FrontPageHandler(webapp.RequestHandler):
 
 
 class StatementHandler(webapp.RequestHandler):
-  """Evaluates a python statement in a given session and returns the result.
-  """
+  """Evaluates a python statement in a given session and returns the result."""
 
   def get(self):
     self.response.headers['Content-Type'] = 'text/plain'
@@ -239,7 +290,8 @@ class StatementHandler(webapp.RequestHandler):
     if lol == '1':
       statement = lolpython.to_python(statement)
       import sys as _lol_sys
-
+	
+    self.response.out.write(statement)
 
     # log and compile the statement up front
     try:

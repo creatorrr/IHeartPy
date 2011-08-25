@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# 2011-08-24:v2a
+# 2011-08-26:v3
 
 # Explicitly cached 'master entries'.
 CACHE:
@@ -8,14 +8,12 @@ CACHE:
 instructions
 resources
 css/style.css
-css/codemirror/codemirror.css
-css/codemirror/theme/neat.css
-css/codemirror/theme/night.css
-js/codemirror/codemirror.js
-js/codemirror/mode/python.js
-js/shell.js
 js/libs/modernizr-2.0.6.min.js
 /offline.html
+/humans.txt
+/robots.txt
+/hackers.txt
+/license.txt
 
 
 # Resources that require the user to be online.
