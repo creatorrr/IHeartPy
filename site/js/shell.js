@@ -31,6 +31,14 @@ var _THEME=0;
 								event.stop();
 								return shellClient.runStatement();
 									}
+								else if ( /* up arrow */ event.ctrlKey && event.keyCode == 38) {
+									event.stop();
+									shellEditor.undo();
+									}
+								else if ( /* down arrow */ event.ctrlKey && event.keyCode == 40) {
+									event.stop();
+									shellEditor.redo();
+									}
 								}
 				});
 
@@ -73,7 +81,7 @@ function trim(str){
 				};
 
 		shellClient.fetchResult = function(result) {
-				result='\n>>> '+result+'\n';
+				result='\n>>> '+result;
 				shellEditor.setValue('');
 				shellDisplay.setValue(shellDisplay.getValue()+result);
 				shellDisplay.refresh();
