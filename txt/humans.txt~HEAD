@@ -15,18 +15,17 @@
   Inspiration: Ila Nitin Gokarn
   Location: Singapore Management University, Singapore
   
-  More: So many more friends, beta-testers, critics. Thanks a ton, people!
+  More: So many more friends, beta-testers, critics. Thanks a ton, guys!
   
 /* THANKS */
   Names (& URL): Sydney George Hopkins(http://en.wikipedia.org/wiki/Mister_God,_This_Is_Anna#Author),
-                Larry & Sergey (http://google.com),
+                People at Google (http://google.com),
                 App-Engine (http://code.google.com/appengine),
-                Guido Van Rossum (http://python.org),
+                Python (http://python.org),
                 Cort Stratton (http://pyaiml.sourceforge.net/),
                 Marijn Haverbeke (http://github.com/marijnh/CodeMirror2)
-                Paul Irish (http://github.com/paulirish/HTML5-Boilerplate)
 
 /* SITE */
   Standards: HTML5, CSS3
-  Components: HTML5-Boilerplate, CodeMirror
+  Components: jQuery, CodeMirror
   Software: Python, App-Engine, PyAIML

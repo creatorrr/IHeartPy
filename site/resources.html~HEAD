@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<!--//Meta Info// -->
+		<meta name="description" content="IHeartPy - Your friendly next-door Python Instructor!">
+		<meta name="author" content="Diwank Singh Tomer - me [at] thediwank [dot] in">
+
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+		<!--//Title// -->
+		<title>I &hearts; Py - {{ title }}</title>
+
+		<!--//Stylesheets// -->
+		<link rel="stylesheet" media="screen" href="/css/style.css">
+		<link rel="stylesheet" media="handheld" href="/css/handheld.css">
+
+
+		<!--//Misc// -->
+		<link rel="shortcut icon" href="/images/favicon.ico">
+		<link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
+
+	</head>
+
+	<body>
+		<!--//MastHead// -->
+		<div class="header">
+			<a href="/"><h1>I Heart Py!</h1></a>
+			<h2> &hearts; The lovable Python Interpreter. &hearts; </h2>
+
+			<blockquote>{{ quotation }} - <em>{{ quotation_author }}</em> <a href="{{ quotation_link }}"> [^] </a> </blockquote>
+
+			<span id="notifications"> <a href="http://uservoice.com/u">Feedback</a> </span>
+
+		</div>
+
+		<hr></hr>
+
+		<!--//Resources// -->
+		<div class="resources">
+			<span class="group">
+				<h4> Videos </h4>
+				<ul>
+					<li><a href="http://www.youtube.com/user/MontyPython" target="_blank">Monty Python</a></li>
+					<li><a href="http://www.youtube.com/watch?v=k6U-i4gXkLM" target="_blank">Introduction to Computer Science and Programming @MIT</a></li>
+				</ul>
+
+			</span>
+
+			<br/>
+
+			<span class="group">
+				<h4> Texts </h4>
+				<ul>
+					<li><a href="http://mitpress.mit.edu/sicp/" target="_blank">Structure and Interpretation of Computer Programs</a></li>
+					<li><a href="http://learnpythonthehardway.org/" target="_blank">Learn Python The Hard Way</a></li>
+					<li><a href="http://greenteapress.com/thinkpython/thinkCSpy/" target="_blank">How to Think Like a Computer Scientist</a></li>
+					<li><a href="http://dragonbook.stanford.edu/" target="_blank">The Dragon Book</a></li>
+					<li><a href="http://diveintopython.org/" target="_blank">Dive Into Python</a></li>
+				</ul>
+
+			</span>
+
+			<br/>
+
+			<span class="group">
+				<h4> Tools </h4>
+				<ul>
+					<li><a href="http://python.org/getit/" target="_blank">Python Interpreter</a></li>
+					<li><a href="http://www.eclipse.org/" target="_blank">Eclipse IDE</a></li>
+					<li><a href="http://code.google.com/appengine/downloads.html" target="_blank">Google App Engine</a></li>
+				</ul>
+
+			</span>
+
+			<br/>
+
+			<span class="group">
+				<h4> Libraries </h4>
+				<ul>
+					<li><a href="http://pyaiml.sourceforge.net/" target="_blank">PyAIML</a></li>
+					<li><a href="http://www.dabeaz.com/ply/" target="_blank">PLY</a></li>
+					<li><a href="http://djangoproject.com/download/" target="_blank">Django</a></li>
+				</ul>
+
+			</span>
+
+
+		</div>
+
+		<hr></hr>
+
+		<!--//Footer// -->
+		<div class="footer">
+			<div class="links">
+				<span>
+				{% if user %}
+					<a href="/shell"> Go to Shell! </a>
+				{% else %}
+					<a href="{{ login_url }}"> Hola! Login? </a>
+				{% endif %}
+					<a href="/"> Home </a>
+					<a href="/instructions"> Instructions </a>
+				</span>
+
+			</div>
+
+
+			<span class="copyright"> Copyright-(2010-12) Creatorrr! Labs <a href="/license.txt"> [^] </a> </span>
+
+		</div>
+
+		<!--//ExecuteOnLoad// -->
+
+
+		<!--//Google Analytics// -->
+		<script type="text/javascript">
+
+		  var _gaq = _gaq || [];
+		  _gaq.push(['_setAccount', 'UA-25004086-1']);
+		  _gaq.push(['_setDomainName', '1heartpy.appspot.com']);
+		  _gaq.push(['_setAllowHash', 'false']);
+		  _gaq.push(['_trackPageview']);
+		
+		  (function() {
+		    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		  })();
+		
+		</script>
+
+	</body>
+
+</html>
