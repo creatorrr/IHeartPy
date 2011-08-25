@@ -1,0 +1,219 @@
+application: iheartpy
+version: 1
+runtime: python
+api_version: 1
+
+default_expiration: "15d"
+#for browser static caching
+
+#########################
+handlers:
+
+- url: /
+  script: main.py
+  secure: always
+
+- url: /resources
+  script: main.py
+  secure: always
+
+- url: /instructions
+  script: main.py
+  secure: always
+
+- url: /download
+  script: zipme.py
+  login: admin
+  secure: always
+  auth_fail_action: redirect
+
+- url: /shell
+  script: shell.py
+  login: admin
+  secure: always
+  auth_fail_action: redirect
+
+- url: /shell.do
+  script: shell.py
+  login: admin
+  secure: always
+  auth_fail_action: unauthorized
+
+- url: /(.+\.(txt|xml))
+  static_files: txt/\1
+  upload: txt/(.+\.(txt|xml))
+  expiration: "1d"
+
+- url: /(.+\.(gif|png|jpg|ico|jpeg))
+  static_files: images/\1
+  upload: images/(.+\.(gif|png|jpg|ico|jpeg))
+  expiration: "30d"
+
+- url: /css
+  static_dir: site/css
+  expiration: "30d"
+
+
+- url: /js
+  static_dir: site/js
+  expiration: "30d"
+
+
+- url: /images
+  static_dir: site/images
+  expiration: "30d"
+
+
+- url: /stats.*
+  script: $PYTHON_LIB/google/appengine/ext/appstats/ui.py
+  #appstats
+  login: admin
+  secure: always
+  auth_fail_action: redirect
+
+- url: /admin.*
+  script: $PYTHON_LIB/google/appengine/ext/admin
+  #admin console
+  login: admin
+  secure: always
+  auth_fail_action: redirect
+
+- url: /connector.*
+  script: $PYTHON_LIB/google/appengine/ext/remote_api/handler.py
+#remote script connector
+  login: admin
+  secure: always
+  auth_fail_action: unauthorized
+
+- url: /data.*
+  script: $PYTHON_LIB/google/appengine/ext/datastore_admin
+  #data admin
+  login: admin
+  secure: always
+  auth_fail_action: redirect
+
+- url: /_ah/mail/.+ 
+  script: email.py
+#handle incoming mail
+  login: admin
+  secure: always
+  auth_fail_action: unauthorized
+
+- url:  /_ah/xmpp/message/chat/
+  script: chat.py
+#handle chat messages
+  login: admin
+  secure: always
+  auth_fail_action: unauthorized
+
+- url:  /_ah/xmpp/subscription/subscribe/
+  script: chat.py
+#handle user sub request
+  login: admin
+  secure: always
+  auth_fail_action: unauthorized
+
+- url:  /_ah/xmpp/subscription/subscribed/
+  script: chat.py
+#handle user allowed app sub request
+  login: admin
+  secure: always
+  auth_fail_action: unauthorized
+
+- url:  /_ah/xmpp/subscription/unsubscribe/
+  script: chat.py
+#handle user unsub request
+  login: admin
+  secure: always
+  auth_fail_action: unauthorized
+
+- url:  /_ah/xmpp/subscription/unsubscribed/
+  script: chat.py
+#handle user disallowed app sub request
+  login: admin
+  secure: always
+  auth_fail_action: unauthorized
+
+- url:  /_ah/xmpp/presence/available/
+  script: chat.py
+#signal=user available
+  login: admin
+  secure: always
+  auth_fail_action: unauthorized
+
+- url:  /_ah/xmpp/presence/unavailable/
+  script: chat.py
+#signal=user unavailable
+  login: admin
+  secure: always
+  auth_fail_action: unauthorized
+
+- url:  /_ah/xmpp/presence/probe/
+  script: chat.py
+#request user presence
+  login: admin
+  secure: always
+  auth_fail_action: unauthorized
+
+- url:  /_ah/warmup/
+  script: ping.py
+#request user presence
+  login: admin
+  secure: always
+  auth_fail_action: unauthorized
+
+#########################
+builtins:
+- datastore_admin: on
+#uncomment to redir datastore_admin to default url
+- appstats: on
+#uncomment to set stats to default url
+- remote_api: on
+#uncomment to redir remote scripts to default url
+- admin_redirect: on
+#redir to dev console
+#- deferred:on
+#task queues
+
+#########################
+inbound_services:
+  - warmup
+  - mail
+  - xmpp_message
+  - xmpp_presence
+  - xmpp_subscribe
+
+#########################
+admin_console:
+#  pages:
+#  #sample to create custom admin console
+#  - name: Blog Comment Admin
+#    url: /blog/admin/comments
+#  - name: Create a Blog Post
+#    url: /blog/admin/newentry
+
+#########################
+error_handlers:
+  - file: error/error.html
+
+  - error_code: over_quota
+    file: error/quota.html
+
+  - error_code: dos_api_denial
+    file: error/deny.html
+
+  - error_code: timeout
+    file: error/timeout.html
+
+#########################
+skip_files:
+- ^(.*/)?app\.yaml
+- ^(.*/)?app\.yml
+- ^(.*/)?index\.yaml
+- ^(.*/)?index\.yml
+- ^(.*/)?#.*#
+- ^(.*/)?.*~
+- ^(.*/)?.*\.py[co]
+- ^(.*/)?.*/RCS/.*
+- ^(.*/)?\..*
+- ^(.*/)?.*\.bak
