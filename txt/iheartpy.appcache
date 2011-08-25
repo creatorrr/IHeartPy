@@ -1,24 +1,30 @@
 CACHE MANIFEST
-# 2011-08-24:v2
+# 2011-08-24:v4
 
 # Explicitly cached 'master entries'.
 CACHE:
 /favicon.ico
-main
+/
 instructions
 resources
-css/*
+css/style.css
+css/codemirror/codemirror.css
+css/codemirror/theme/neat.css
+css/codemirror/theme/night.css
+js/codemirror/codemirror.js
+js/codemirror/mode/python.js
+js/shell.js
+js/libs/modernizr-2.0.6.min.js
+/offline.html
 
 
 # Resources that require the user to be online.
 NETWORK:
 shell
-shell.do*
-_ah/*
+shell.do
+_ah/
 
-# static.html will be served if main.py is inaccessible
-# offline.jpg will be served in place of all images in images/large/
-# offline.html will be served in place of all other .html files
 FALLBACK:
 /shell /offline.html
-/_ah/* /offline.html
+/shell.do /offline.html
+/_ah/ /offline.html
