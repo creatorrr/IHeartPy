@@ -4,17 +4,14 @@ CACHE MANIFEST
 # Explicitly cached 'master entries'.
 CACHE:
 /favicon.ico
-/
-instructions
-resources
-css/style.css
-css/codemirror/codemirror.css
-css/codemirror/theme/neat.css
-css/codemirror/theme/night.css
-js/codemirror/codemirror.js
-js/codemirror/mode/python.js
-js/shell.js
-js/libs/modernizr-2.0.6.min.js
+/css/style.css
+/css/codemirror/codemirror.css
+/css/codemirror/theme/neat.css
+/css/codemirror/theme/night.css
+/js/codemirror/codemirror.js
+/js/codemirror/mode/python.js
+/js/shell.js
+/js/libs/modernizr-2.0.6.min.js
 /offline.html
 
 
