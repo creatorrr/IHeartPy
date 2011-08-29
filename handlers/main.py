@@ -71,6 +71,24 @@ class FrontPageHandler(webapp.RequestHandler):
     rendered = webapp.template.render(template_file, vars, debug=_DEBUG)
     self.response.out.write(rendered)
 
+class WTHPageHandler(webapp.RequestHandler):
+  """Creates a new session and renders the Front Page."""
+
+  def get(self):
+    # set up the session. TODO: garbage collect old shell sessions
+
+    template_file = os.path.abspath('../site/wth.html')
+    session_url = '/shell'
+
+    vars = { 'quotation': getQuote()[0],
+             'quotation_author': getQuote()[1],
+             'title': 'WTH?',
+             'analytics_id':'UA-25004086-1',
+             }
+    rendered = webapp.template.render(template_file, vars, debug=_DEBUG)
+    self.response.out.write(rendered)
+
+
 class ResourcePageHandler(webapp.RequestHandler):
   """Renders the Resources Page."""
 
@@ -115,7 +133,7 @@ class InstructionsPageHandler(webapp.RequestHandler):
 
 def main():
   application = webapp.WSGIApplication(
-    [('/', FrontPageHandler),('/resources', ResourcePageHandler),('/instructions', InstructionsPageHandler)], debug=_DEBUG)
+    [('/', FrontPageHandler),('/wth', WTHPageHandler),('/resources', ResourcePageHandler),('/instructions', InstructionsPageHandler)], debug=_DEBUG)
   wsgiref.handlers.CGIHandler().run(application)
 
 

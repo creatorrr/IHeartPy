@@ -7,7 +7,7 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" manifest="iheartpy-shell.appcache"> <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <link rel="dns-prefetch" href="//www.google-analytics.com" />
+  <link rel="dns-prefetch" href="http://www.google-analytics.com" />
   <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml" />
   
 		<!--//Meta Info// -->
@@ -21,7 +21,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 		<!--//IE9 Pinned Sites// -->
-	<meta name="application-name" content="Sample Title" />
+	<meta name="application-name" content="IHeart" />
 	<meta name="msapplication-tooltip" content="A description of what this site does." />
 	<meta name="msapplication-starturl" content="https://1heartpy.appspot.com/shell" />
 	<meta name="msapplication-task" content="name=Shell;action-uri=https://1heartpy.appspot.com/shell;icon-uri=https://1heartpy.appspot.com/favicon.ico" />
@@ -118,13 +118,19 @@ Python {{ python_version }}</textarea></form>
 		<script type="text/javascript" src="/js/shell.js"></script>
 
 		<!--//Google Analytics// -->
-		<script>
-		    window._gaq = [['_setAccount','{{analytics_id}}'],['_trackPageview'],['_trackPageLoadTime']];
-		    Modernizr.load({
-		      load: ('https:' == location.protocol ? '//ssl' : '//www') + '.google-analytics.com/ga.js'
-		    });
-		</script>
+		<script type="text/javascript">
+			  var _gaq = _gaq || [];
+			  _gaq.push(['_setAccount', '{{analytics_id}}']);
+			  _gaq.push(['_setDomainName', '.appspot.com']);
+			  _gaq.push(['_trackPageview']);
 
+			  (function() {
+				var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+				ga.src = 'https://ssl.google-analytics.com/ga.js';
+				var s = document.getElementsByTagName('link')[0]; s.parentNode.insertBefore(ga, s);
+			  })();
+
+		</script>
   <!-- Prompt IE 6 users to install Chrome Frame. Remove this if you want to support IE 6.
        chromium.org/developers/how-tos/chrome-frame-getting-started -->
   <!--[if lt IE 7 ]>
