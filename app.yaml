@@ -1,5 +1,5 @@
 application: 1heartpy
-version: 2a
+version: 2b
 runtime: python
 api_version: 1
 
@@ -21,8 +21,13 @@ handlers:
   script: handlers/main.py
   secure: always
 
+- url: /wth
+  script: handlers/main.py
+  secure: always
+
 - url: /download
   script: handlers/zipme.py
+  secure: always
 
 - url: /shell
   script: handlers/shell.py

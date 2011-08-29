@@ -7,7 +7,7 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" manifest="iheartpy.appcache"> <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <link rel="dns-prefetch" href="//www.google-analytics.com" />
+  <link rel="dns-prefetch" href="http://www.google-analytics.com" />
   <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml" />
   
 		<!--//Meta Info// -->
@@ -20,7 +20,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 		<!--//IE9 Pinned Sites// -->
-	<meta name="application-name" content="Sample Title" />
+	<meta name="application-name" content="IHeartPy" />
 	<meta name="msapplication-tooltip" content="A description of what this site does." />
 	<meta name="msapplication-starturl" content="https://1heartpy.appspot.com/shell" />
 	<meta name="msapplication-task" content="name=Shell;action-uri=https://1heartpy.appspot.com/shell;icon-uri=https://1heartpy.appspot.com/favicon.ico" />
@@ -94,6 +94,18 @@
 			<br/>
 
 			<span class="group">
+				<h4> About </h4>
+				<ul>
+					<li>&hearts; Your friendly neighborhood <a href="http://python.org" style="font-size:1em;margin-left:0;">Python instructor.</a></li>
+					<li>&hearts; Goodbye to pathetic "Python in two days!" books. <em>Get interactive, baby.</em></li>
+					<li>&hearts; I still don't get it! <a href="/wth" style="font-size:1em;margin-left:0;">WTH?</a></li>
+				</ul>
+
+			</span>
+			
+			<br/>
+
+			<span class="group">
 				<h4> Feedback </h4>
 				<ul>
 					<li>&hearts; Hope you had fun.</li>
@@ -135,12 +147,15 @@
 
 
   <!-- Change UA-XXXXX-X to be your site's ID -->
-  <script>
-    window._gaq = [['_setAccount','{{analytics_id}}'],['_trackPageview'],['_trackPageLoadTime']];
-    Modernizr.load({
-      load: ('https:' == location.protocol ? '//ssl' : '//www') + '.google-analytics.com/ga.js'
-    });
-  </script>
+		<script src='https://ssl.google-analytics.com/ga.js' type='text/javascript'>
+
+		<!--//Google Analytics// -->
+		<script type="text/javascript">
+			  var _gaq = _gaq || [];
+			  _gaq.push(['_setAccount', '{{analytics_id}}']);
+			  _gaq.push(['_setDomainName', '.appspot.com']);
+			  _gaq.push(['_trackPageview']);
+		</script>
 
 
   <!-- Prompt IE 6 users to install Chrome Frame. Remove this if you want to support IE 6.

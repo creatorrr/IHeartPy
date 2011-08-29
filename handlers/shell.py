@@ -246,6 +246,8 @@ class FrontPageHandler(webapp.RequestHandler):
       session_key = session.put()
 
     template_file = os.path.abspath('../site/shell.html')
+    if "mobile" in self.request.user_agent.lower():
+		template_file = os.path.abspath('../site/mobile-shell.html')
 
     session_url = '/shell'
     quote=getQuote()
