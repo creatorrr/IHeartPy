@@ -8,7 +8,7 @@ $(function() {
 function painter(event) {
 	$('body').removeClass('dark');
 	$('.instructions').removeClass('light');
-	$('.instructions').html('Use <em>[&larr;]&nbsp;[&rarr;]</em> to navigate.');
+	$('.instructions').html('Use <em><a onclick="prevSlide();">[&larr;]</a>&nbsp;<a onclick="nextSlide();">[&rarr;]</a></em> to navigate.');
 	if(($.deck('getSlide').attr('id')=='heart')||($.deck('getSlide').attr('id')=='bye')){
 		$('body').addClass('dark');
 		$('.instructions').addClass('light');
@@ -17,4 +17,14 @@ function painter(event) {
 		$('.instructions').html('<em>Hastalavista baby!</em>');
 		}
 		
+}
+
+function nextSlide() {
+$.deck('next');
+painter();
+}
+
+function prevSlide() {
+$.deck('prev');
+painter();
 }

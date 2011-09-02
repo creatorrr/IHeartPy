@@ -344,7 +344,7 @@ display:none;
 
 
 a{
-  display:block;
+  display:inline;
   color: inherit;
   text-decoration: none;
   cursor: crosshair;

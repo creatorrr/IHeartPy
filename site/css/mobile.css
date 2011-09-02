@@ -378,8 +378,8 @@ text-align: center;
 /*Editor*/
 
 .editor textarea{
-height: auto;
-width: 780px;
+height: 8em;
+width: 100%;
 margin:auto;
 }
 
