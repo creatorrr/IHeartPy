@@ -27,7 +27,6 @@ across commands.
 """
 
 import logging
-import pickle
 import new
 import os
 import sys
@@ -35,6 +34,8 @@ import traceback
 import types
 import wsgiref.handlers
 import random
+from re import escape
+import urllib
 
 sys.path.append(os.path.abspath(''))
 
@@ -43,159 +44,110 @@ import aiml
 
 try:
   from google.appengine.api import users
+  from google.appengine.api import memcache
   from google.appengine.ext import db
   from google.appengine.ext import webapp
   from google.appengine.ext.webapp import template
-  INITIAL_UNPICKLABLES = [
-    'from google.appengine.ext import db',
-    'from google.appengine.api import users',
-	]
 
 except ImportError:
   from google3.apphosting.api import users
+  from google3.apphosting.api import memcache
   from google3.apphosting.ext import db
   from google3.apphosting.ext import webapp
   from google3.apphosting.ext.webapp import template
-  INITIAL_UNPICKLABLES = [
-    'from google3.apphosting.ext import db',
-    'from google3.apphosting.api import users',
-    ]
 
 
 # Set to True if stack traces should be shown in the browser, etc.
-_DEBUG = False
+_DEBUG = True
 
 # The entity kind for shell sessions. Feel free to rename to suit your app.
 _SESSION_KIND = 'IHeartPy_Shell_Session'
 _GA_ID='UA-25004086-1'
 
-# Types that can't be pickled.
-UNPICKLABLE_TYPES = (
-  types.ModuleType,
-  types.TypeType,
-  types.ClassType,
-  types.FunctionType,
-  )
-
-# Unpicklable statements to seed new sessions with.
-INITIAL_UNPICKLABLES += [
+# Initializer statements to seed new sessions with.
+INITIALIZERS = [
   'import logging',
   'import os',
   'import sys',
   'class Foo(db.Expando):\n  pass',
   ]
 
-#INITIAL_UNPICKLABLES = []
-class Session(db.Model):
-  """A shell session. Stores the session's globals.
-
-  Each session globals is stored in one of two places:
-
-  If the global is picklable, it's stored in the parallel globals and
-  global_names list properties.
+class ShellUser(db.Model):
+  """Holds user properties."""
   
-  If the global is not picklable (e.g. modules, classes, and functions), or if
-  it was created by the same statement that created an unpicklable global,
-  it's not stored directly. Instead, the statement is stored in the
-  unpicklables list property. On each request, before executing the current
-  statement, the unpicklable statements are evaluated to recreate the
-  unpicklable globals.
+  name = db.StringProperty(required=True)
+  role = db.StringProperty(required=True, choices=set(["admin", "tester", "student"]), indexed=False)
+  first_access_date = db.DateProperty(auto_now_add=True)
+  last_access_date = db.DateProperty(auto_now=True)
+  course_completed = db.BooleanProperty(required=True)
+  account = db.UserProperty(required=True)
+  email = db.EmailProperty(required=True)
+  current_lesson = db.RatingProperty(required=True)
+  im_handle = db.IMProperty(indexed=False)
 
-  The unpicklable_names property stores all of the names of globals that were
-  added by unpicklable statements. When we pickle and store the globals after
-  executing a statement, we skip the ones in unpicklable_names.
-
+class History(db.Model):
+  """History holds statements history for a kiddo.
+  
   Using Text instead of string is an optimization. We don't query on any of
   these properties, so they don't need to be indexed.
   """
-  
-  global_names = db.ListProperty(db.Text)
-  globals = db.ListProperty(db.Blob)
-  unpicklable_names = db.ListProperty(db.Text)
-  unpicklables = db.ListProperty(db.Text)
-
-  def set_global(self, name, value):
-    """Adds a global, or updates it if it already exists.
-
-    Also removes the global from the list of unpicklable names.
-
-    Args:
-      name: the name of the global to remove
-      value: any picklable value
-    """
-    blob = db.Blob(pickle.dumps(value))
-
-    if name in self.global_names:
-      index = self.global_names.index(name)
-      self.globals[index] = blob
-    else:
-      self.global_names.append(db.Text(name))
-      self.globals.append(blob)
-
-    self.remove_unpicklable_name(name)
-
-  def remove_global(self, name):
-    """Removes a global, if it exists.
-
-    Args:
-      name: string, the name of the global to remove
-    """
-    if name in self.global_names:
-      index = self.global_names.index(name)
-      del self.global_names[index]
-      del self.globals[index]
-
-  def globals_dict(self):
-    """Returns a dictionary view of the globals.
-    """
-    return dict((name, pickle.loads(val))
-                for name, val in zip(self.global_names, self.globals))
-
-  def add_unpicklable(self, statement, names):
-    """Adds a statement and list of names to the unpicklables.
-
-    Also removes the names from the globals.
-
-    Args:
-      statement: string, the statement that created new unpicklable global(s).
-      names: list of strings; the names of the globals created by the statement.
-    """
-    self.unpicklables.append(db.Text(statement))
-
-    for name in names:
-      self.remove_global(name)
-      if name not in self.unpicklable_names:
-        self.unpicklable_names.append(db.Text(name))
-
-  def remove_unpicklable_name(self, name):
-    """Removes a name from the list of unpicklable names, if it exists.
-
-    Args:
-      name: string, the name of the unpicklable global to remove
-    """
-    if name in self.unpicklable_names:
-      self.unpicklable_names.remove(name)
-
+  account = db.UserProperty(required=True)
+  statements = db.ListProperty(db.Text)
+  number = db.IntegerProperty()
+  access_time = db.DateTimeProperty(auto_now=True)
 
 def getQuote():
   """Returns a randomized quotation"""
   libraryFile=open('../site/quotes.txt','r')
   library=libraryFile.readlines()
-  return (random.choice(library)).split(';')
+  return random.choice(library).split(';')
+
+def get_memcached_values(session_key):
+  """Retrieves all statements in history for given namespace"""
+  if not memcache.get(key='counter',namespace=session_key):
+    memcache.add(key='counter',time=7500,value=0,namespace=session_key)
+    return []
+  
+  counter=memcache.get(key='counter',namespace=session_key)
+  statement_list=[]
+  flag=1
+  while counter >flag:
+    statement_list.append((urllib.unquote(memcache.get(key='statement'+str(flag),namespace=session_key))).decode("string-escape"))
+    flag+=1
+  
+  return statement_list
+
+def add_memcached_statement(statement, session_key):
+  """Retrieves all statements in history for given namespace"""
+  if not memcache.get(key='counter',namespace=session_key):
+    memcache.add(key='counter',value=0,time=7500,namespace=session_key)
+  
+  memcache.incr(key='counter',namespace=session_key,initial_value=0)
+  counter=memcache.get(key='counter',namespace=session_key)
+  try:
+    memcache.add(key='statement'+str(counter),time=7500,value=urllib.quote(statement),namespace=session_key)
+  except:
+    logging.error("Memcache miss")
+    return False
+  
+  return True
+  
+
 
 class ShellPageHandler(webapp.RequestHandler):
   """Creates a new session and renders the shell.html template."""
+  
+  def generate_hash(self):
+    from time import gmtime, strftime
+    import sha
+    seed=strftime("%A:%W, %B %d %Y", gmtime())+users.get_current_user().user_id()+users.get_current_user().email()
+    return sha.new(str(seed)).hexdigest()
 
   def get(self):
-    # set up the session. TODO: garbage collect old shell sessions
     session_key = self.request.get('session')
-    if session_key:
-      session = Session.get(session_key)
-    else:
+    if not session_key:
       # create a new session
-      session = Session()
-      session.unpicklables = [db.Text(line) for line in INITIAL_UNPICKLABLES]
-      session_key = session.put()
+      session_key = self.generate_hash()
 
     template_file = os.path.abspath('../site/shell.html')
     if "mobile" in self.request.user_agent.lower():
@@ -204,7 +156,7 @@ class ShellPageHandler(webapp.RequestHandler):
     session_url = '/shell'
     quote=getQuote()
 
-    notifications="Hola, &#223;-Tester!"
+    notifications="Hola, " + users.get_current_user().nickname() +"!"
     
     vars = { 'server_software': os.environ['SERVER_SOFTWARE'],
              'python_version': sys.version,
@@ -227,6 +179,29 @@ class StatementHandler(webapp.RequestHandler):
   """Evaluates a python statement in a given session and returns the result."""
 
   def get(self):
+
+    _DEFAULT_ROLE = "tester"
+    user=users.get_current_user()
+    query=ShellUser.all()
+    query.filter("account = ", user)
+    db_user = query.get()
+    
+    if not db_user:
+       db_user = ShellUser(name=user.nickname(),
+        									role=_DEFAULT_ROLE,
+        									course_completed = False,
+        									account = user,
+        									email = user.email(),
+      	  								current_lesson = 1)
+       history = History(account = user,
+       							number = 0)
+       db_user.put()
+       history.put()
+  
+    query=History.all()
+    query.filter("account = ", user)
+    history = query.get()
+
     self.response.headers['Content-Type'] = 'text/plain'
 
     # extract the statement to be run
@@ -264,30 +239,23 @@ class StatementHandler(webapp.RequestHandler):
     import __builtin__
     statement_module.__builtins__ = __builtin__
 
-    # load the session from the datastore
-    session = Session.get(self.request.get('session'))
+    # load the session
+    session_key = self.request.get('session')
 
-    # swap in our custom module for __main__. then unpickle the session
-    # globals, run the statement, and re-pickle the session globals, all
-    # inside it.
+    # swap in our custom module for __main__.
     old_main = sys.modules.get('__main__')
     try:
       sys.modules['__main__'] = statement_module
       statement_module.__name__ = '__main__'
 
-      # re-evaluate the unpicklables
-      for code in session.unpicklables:
-        exec code in statement_module.__dict__
-
-      # re-initialize the globals
-      for name, val in session.globals_dict().items():
+      # re-evaluate the statements history
+      for code in get_memcached_values(session_key):
         try:
-          statement_module.__dict__[name] = val
+          compiled_code = compile(code, '<string>', 'single')
+          exec compiled_code in statement_module.__dict__
+          logging.info("Executing statements from history:"+code)
         except:
-          msg = 'Dropping %s since it could not be unpickled.\n' % name
-          self.response.out.write(msg)
-          logging.warning(msg + traceback.format_exc())
-          session.remove_global(name)
+          logging.warning("Error in executing history:"+code)
 
       # run!
       old_globals = dict(statement_module.__dict__)
@@ -305,31 +273,12 @@ class StatementHandler(webapp.RequestHandler):
         self.response.out.write(traceback.format_exc())
         return
 
-      # extract the new globals that this statement added
-      new_globals = {}
-      for name, val in statement_module.__dict__.items():
-        if name not in old_globals or val != old_globals[name]:
-          new_globals[name] = val
-
-      if True in [isinstance(val, UNPICKLABLE_TYPES)
-                  for val in new_globals.values()]:
-        # this statement added an unpicklable global. store the statement and
-        # the names of all of the globals it added in the unpicklables.
-        session.add_unpicklable(statement, new_globals.keys())
-        logging.debug('Storing this statement as an unpicklable.')
-
-      else:
-        # this statement didn't add any unpicklables. pickle and store the
-        # new globals back into the datastore.
-        for name, val in new_globals.items():
-          if not name.startswith('__'):
-            session.set_global(name, val)
+      # statement added
+      add_memcached_statement(statement, session_key)
+      logging.debug('Storing this statement in memcache.')
 
     finally:
       sys.modules['__main__'] = old_main
-
-    session.put()
-
 
 def main():
   application = webapp.WSGIApplication(

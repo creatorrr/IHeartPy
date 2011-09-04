@@ -1,0 +1,77 @@
+{'quotes':[
+					{'text':'Real men don't use backups, they post their stuff on a public ftp server and let the rest of the world make copies.',
+					'author':'Linus Torvalds',
+					'link':'https://plus.google.com/102150693225130002912'
+					},
+
+					{'text':'There are 10 types of people in the world: those who understand binary, and those who don't.',
+					'author':'Anonymous',
+					'link':'http://xkcd.com/99/'
+					},
+
+					{'text':'If at first you don't succeed; call it version 1.0',
+					'author':'Anonymous',
+					'link':'http://git-scm.com/'
+					},
+
+					{'text':'If you think about computer programming, it's as antisocial as it gets.',
+					'author':'Shawn Fanning',
+					'link':'http://en.wikipedia.org/wiki/Shawn_Fanning'
+					},
+
+					{'text':'I have this hope that there is a better way.',
+					'author':'Guido van Rossum',
+					'link':'http://python.org/getit'
+					},
+
+					{'text':'When someone says, 'I want a programming language in which I need only say what I want done,' give him a lollipop.',
+					'author':'Alan Perlis',
+					'link':'http://www.sugarfactory.com/index.php/yum/signature_series'
+					},
+
+					{'text':'I'll be back.',
+					'author':'The Terminator',
+					'link':'http://www.imdb.com/title/tt0088247/quotes'
+					},
+
+					{'text':'Made it, Ma! Top of the world!',
+					'author':'White Heat',
+					'link':'http://www.imdb.com/title/tt0042041/quotes'
+					},
+
+					{'text':'Fuh-get about it!',
+					'author':'Donnie Brasco',
+					'link':'http://www.imdb.com/title/tt0119008/quotes'
+					},
+
+					{'text':'I hope this turns out better than your plan to cook rice in your stomach by eating it raw and then drinking boiling water...',
+					'author':'Kung Fu Panda 2',
+					'link':'http://www.imdb.com/title/tt1302011/quotes'
+					},
+
+					{'text':'Before software can be reusable it first has to be usable.',
+					'author':'Ralph Johnson',
+					'link':'http://www.devtopics.com/20-famous-software-disasters/'
+					},
+
+					{'text':'Programs must be written for people to read, and only incidentally for machines to execute.',
+					'author':'Abelson',
+					'link':'http://www.codinghorror.com/blog/2006/05/code-smells.html'
+					},
+
+					{'text':'Never ascribe to malice, that which can be explained by incompetence.',
+					'author':'Napoleon',
+					'link':'http://en.wikipedia.org/wiki/Malice_(legal_term)'
+					},
+
+					{'text':'Any fool can write code that a computer can understand. Good programmers write code that humans can understand.',
+					'author':'Martin Fowle',
+					'link':'http://thc.org/root/phun/unmaintain.html'
+					},
+
+					{'text':'There is no charge for awesomeness... or attractiveness.',
+					'author':'Kung Fu Panda',
+					'link':'http://www.google.co.in/search?ie=UTF-8&q=kung+fu+panda+awesomeness'
+					}
+			]
+}

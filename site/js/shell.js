@@ -112,7 +112,6 @@ function trim(str){
 				};
 
 		shellClient.done = function(req) {
-		alert(req.readyState);
 				if (req.readyState == this.DONE_STATE) {
 					var result = req.responseText.replace(/^\s*|\s*$/g, '');  // trim whitespace
 					return this.printResult(result);

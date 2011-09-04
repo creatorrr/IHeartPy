@@ -1,5 +1,5 @@
 application: 1heartpy
-version: 2b
+version: 2c
 runtime: python
 api_version: 1
 
@@ -31,13 +31,13 @@ handlers:
 
 - url: /shell
   script: handlers/shell.py
-  login: admin
+  login: required
   secure: always
   auth_fail_action: redirect
 
 - url: /shell.do
   script: handlers/shell.py
-  login: admin
+  login: required
   secure: always
   auth_fail_action: unauthorized
 
