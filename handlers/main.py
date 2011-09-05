@@ -20,15 +20,10 @@ Main Page Handler
 
 """
 
-
 import logging
-import new
 import os
-import sys
-import traceback
-import types
 import wsgiref.handlers
-
+import random
 
 try:
   from google.appengine.api import users
@@ -42,98 +37,47 @@ except ImportError:
 
 # Set to True if stack traces should be shown in the browser, etc.
 _DEBUG = False
-
+_GA_ID = 'UA-25004086-1'
 
 
 def getQuote():
-  """Gets a randomized quotation"""
-#fetch quotes from BrainyQuote API
-  return ("There is no charge for awesomeness... or attractiveness.","Kung Fu Panda","http://www.google.co.in/search?ie=UTF-8&q=kung+fu+panda+awesomeness")
+  """Returns a randomized quotation"""
+  libraryFile=open('../site/quotes.txt','r')
+  library=libraryFile.readlines()
+  return (random.choice(library)).split(';')
 
-class FrontPageHandler(webapp.RequestHandler):
-  """Creates a new session and renders the Front Page."""
+class PageHandler(webapp.RequestHandler):
+  """Renders the Front Page."""
 
-  def get(self):
+  def get(self,argument):
     # set up the session. TODO: garbage collect old shell sessions
 
-    template_file = os.path.abspath('../site/main.html')
+    template_file = os.path.abspath('../site/'+argument+'.html')
+    template_fallback = os.path.abspath('../site/main.html')
+    
     session_url = '/shell'
+    quote=getQuote()
 
     vars = { 'user': users.get_current_user(),
              'login_url': users.create_login_url('/shell'),
              'logout_url': users.create_logout_url('/'),
-             'quotation': getQuote()[0],
-             'quotation_author': getQuote()[1],
-             'quotation_link': getQuote()[2],
-             'title': 'Home',
-             'analytics_id':'UA-25004086-1',
+             'quotation': quote[0],
+             'quotation_author': quote[1],
+             'quotation_link': quote[2],
+             'title': argument or 'home',
+             'analytics_id':_GA_ID,
              }
-    rendered = webapp.template.render(template_file, vars, debug=_DEBUG)
+    try:
+    	rendered = webapp.template.render(template_file, vars, debug=_DEBUG)
+    except:
+    	rendered = webapp.template.render(template_fallback, vars, debug=_DEBUG)
+    
+    logging.info(argument+' called.')
     self.response.out.write(rendered)
-
-class WTHPageHandler(webapp.RequestHandler):
-  """Creates a new session and renders the Front Page."""
-
-  def get(self):
-    # set up the session. TODO: garbage collect old shell sessions
-
-    template_file = os.path.abspath('../site/wth.html')
-    session_url = '/shell'
-
-    vars = { 'quotation': getQuote()[0],
-             'quotation_author': getQuote()[1],
-             'title': 'WTH?',
-             'analytics_id':'UA-25004086-1',
-             }
-    rendered = webapp.template.render(template_file, vars, debug=_DEBUG)
-    self.response.out.write(rendered)
-
-
-class ResourcePageHandler(webapp.RequestHandler):
-  """Renders the Resources Page."""
-
-  def get(self):
-    # set up the session. TODO: garbage collect old shell sessions
-
-    template_file = os.path.abspath('../site/resources.html')
-    session_url = '/shell'
-
-    vars = { 'user': users.get_current_user(),
-             'login_url': users.create_login_url('/shell'),
-             'logout_url': users.create_logout_url('/'),
-             'quotation': getQuote()[0],
-             'quotation_author': getQuote()[1],
-             'quotation_link': getQuote()[2],
-             'title': 'Resources',
-             }
-    rendered = webapp.template.render(template_file, vars, debug=_DEBUG)
-    self.response.out.write(rendered)
-
-
-class InstructionsPageHandler(webapp.RequestHandler):
-  """Renders the Instructions Page."""
-
-  def get(self):
-    # set up the session. TODO: garbage collect old shell sessions
-
-    template_file = os.path.abspath('../site/instructions.html')
-    session_url = '/shell'
-
-    vars = { 'user': users.get_current_user(),
-             'login_url': users.create_login_url('/shell'),
-             'logout_url': users.create_logout_url('/'),
-             'quotation': getQuote()[0],
-             'quotation_author': getQuote()[1],
-             'quotation_link': getQuote()[2],
-             'title': 'Instructions',
-             }
-    rendered = webapp.template.render(template_file, vars, debug=_DEBUG)
-    self.response.out.write(rendered)
-
 
 def main():
   application = webapp.WSGIApplication(
-    [('/', FrontPageHandler),('/wth', WTHPageHandler),('/resources', ResourcePageHandler),('/instructions', InstructionsPageHandler)], debug=_DEBUG)
+						    [('/(.*)', PageHandler),], debug=_DEBUG)
   wsgiref.handlers.CGIHandler().run(application)
 
 

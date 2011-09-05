@@ -64,6 +64,7 @@ function trim(str){
 
 	var shellClient = {}
 		shellClient.DONE_STATE = 4;
+		shellClient.ERROR_STATE = 0;
 
 		shellClient.getXmlHttpRequest = function() {
 				if (window.XMLHttpRequest) {
@@ -80,10 +81,26 @@ function trim(str){
 				return null;
 				};
 
-		shellClient.fetchResult = function(result) {
+		shellClient.printResult = function(result) {
 				result='\n>>> '+result;
+				shellEditor.save();
 				shellEditor.setValue('');
 				shellDisplay.setValue(shellDisplay.getValue()+result);
+				shellEditor.save();
+				shellDisplay.refresh();
+				pos={}
+				pos.line=shellDisplay.lineCount()-1;
+				pos.ch=0;
+				shellDisplay.setCursor(pos);
+				shellEditor.focus();
+				window.scrollTo(0,window.innerHeight);
+				return true;
+				};
+
+		shellClient.printError = function(result) {
+				shellEditor.save();
+				shellEditor.setValue('');
+				shellDisplay.setValue("\n\tOops! No connectivity. Did you trip over your network cable?\n");
 				shellDisplay.refresh();
 				pos={}
 				pos.line=shellDisplay.lineCount()-1;
@@ -97,14 +114,17 @@ function trim(str){
 		shellClient.done = function(req) {
 				if (req.readyState == this.DONE_STATE) {
 					var result = req.responseText.replace(/^\s*|\s*$/g, '');  // trim whitespace
-					return this.fetchResult(result);
+					return this.printResult(result);
+					}
+				else if (req.readyState == this.ERROR_STATE){
+					return this.printError();
 					}
 				};
 
 		shellClient.runStatement = function() {
 				var req = this.getXmlHttpRequest();
 				if (!req) {
-					document.getElementById('notifications').innerHTML = "Duh! Some stupid error. Your browser probably doesn't support AJAX. :(";
+					shellDisplay.setValue("\n\tDuh! Some stupid error. Your browser probably doesn't support AJAX. :(\n");
 					return false;
 					}
 				req.onreadystatechange = function() { shellClient.done(req); };

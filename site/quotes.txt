@@ -1,0 +1,15 @@
+There is no charge for awesomeness... or attractiveness.;Kung Fu Panda;http://www.google.co.in/search?ie=UTF-8&q=kung+fu+panda+awesomeness
+Any fool can write code that a computer can understand. Good programmers write code that humans can understand.;Martin Fowle;http://thc.org/root/phun/unmaintain.html
+Never ascribe to malice, that which can be explained by incompetence.;Napoleon;http://en.wikipedia.org/wiki/Malice_(legal_term)
+Programs must be written for people to read, and only incidentally for machines to execute.;Abelson;http://www.codinghorror.com/blog/2006/05/code-smells.html
+Before software can be reusable it first has to be usable.;Ralph Johnson;http://www.devtopics.com/20-famous-software-disasters/
+When someone says, 'I want a programming language in which I need only say what I want done,' give him a lollipop.;Alan Perlis;http://www.sugarfactory.com/index.php/yum/signature_series
+If at first you don't succeed, call it version 1.0;Anonymous;http://git-scm.com/
+There are 10 types of people in the world: those who understand binary, and those who don't.;Anonymous;http://xkcd.com/99/
+Real men don't use backups, they post their stuff on a public ftp server and let the rest of the world make copies.;Linus Torvalds;https://plus.google.com/102150693225130002912
+If you think about computer programming, it's as antisocial as it gets.;Shawn Fanning;http://en.wikipedia.org/wiki/Shawn_Fanning
+I have this hope that there is a better way.;Guido van Rossum;http://python.org/getit
+I'll be back.;The Terminator;http://www.imdb.com/title/tt0088247/quotes
+Made it, Ma! Top of the world!;White Heat;http://www.imdb.com/title/tt0042041/quotes
+Fuh-get about it!;Donnie Brasco;http://www.imdb.com/title/tt0119008/quotes
+I hope this turns out better than your plan to cook rice in your stomach by eating it raw and then drinking boiling water...;Kung Fu Panda 2;http://www.imdb.com/title/tt1302011/quotes
