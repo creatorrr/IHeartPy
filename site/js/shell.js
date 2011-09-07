@@ -4,6 +4,7 @@
 
 var _LOL_MODE=0;
 var _THEME=0;
+var _START=0
 
 	var shellEditor = CodeMirror.fromTextArea(document.getElementById("prompt"), {
 				value: document.getElementById("display").value,
@@ -29,7 +30,7 @@ var _THEME=0;
 									}
 								else if (/* enter */ event.type=="keypress" && event.keyCode == 13 && !event.altKey && !event.shiftKey) {
 								event.stop();
-								return shellClient.runStatement();
+								return shellClient.runStatement('');
 									}
 								else if ( /* up arrow */ event.ctrlKey && event.keyCode == 38) {
 									event.stop();
@@ -121,16 +122,18 @@ function trim(str){
 					}
 				};
 
-		shellClient.runStatement = function() {
+		shellClient.runStatement = function(statement) {
 				var req = this.getXmlHttpRequest();
 				if (!req) {
 					shellDisplay.setValue("\n\tDuh! Some stupid error. Your browser probably doesn't support AJAX. :(\n");
 					return false;
 					}
 				req.onreadystatechange = function() { shellClient.done(req); };
- 
+				
+				if(statement=='')statement=(escape(shellEditor.getValue())).replace('+','%2B');
+
 				var params = '';			// build the query parameter string
-				params += '&' + 'statement' + '=' + (escape(shellEditor.getValue())).replace('+','%2B');
+				params += '&' + 'statement' + '=' + statement;
 				params += '&' + 'session' + '=' + escape(document.getElementById('shellSessionId').content); 
 				params += '&' + 'lol' + '=' + _LOL_MODE; 
 
@@ -152,6 +155,7 @@ function shellInit(){
 		shellEditor.setMarker(gutter.line,gutter.text);
 		shellEditor.focus();
 		shellDisplay.refresh();
+		//shellClient.runStatement('');
 		}
 
 function printer(content){

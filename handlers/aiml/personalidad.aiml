@@ -20,7 +20,7 @@
         HOLA *
     </pattern>
     <template>
-        <srai>HOLA</srai>
+        Hi <star/>
     </template>
 </category>
 
@@ -114,7 +114,7 @@
 	QUE HORA ES	
     </pattern>
     <template>
-    	<system>echo "Son las $(date +%H) horas, $(date +%M) minutos y $(date +%S) segundos " | voz</system>
+    	<system>echo "Son las $(date +%H) horas, $(date +%M) minutos y $(date +%S) segundos "</system>
     </template>
 </category>
 
