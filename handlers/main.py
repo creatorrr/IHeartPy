@@ -52,8 +52,14 @@ class PageHandler(webapp.RequestHandler):
   def get(self,argument):
     # set up the session. TODO: garbage collect old shell sessions
 
-    template_file = os.path.abspath('../site/'+argument+'.html')
-    template_fallback = os.path.abspath('../site/main.html')
+    
+    if argument in ('','shell','resources','instructions','wth'):
+		template_file = os.path.abspath('../site/'+argument+'.html')
+		template_fallback = os.path.abspath('../site/main.html')
+	
+    else:
+		template_fallback = template_file = os.path.abspath('../site/error.html')
+
     
     session_url = '/shell'
     quote=getQuote()

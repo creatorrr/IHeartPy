@@ -322,13 +322,42 @@ padding: 0 1em 0 1em;
   position: fixed;
   top: 5em;
   right: 0;
-  background-color: #7e4;
+  background-color: #72EB08;
   line-height: 2em;
   word-spacing: 3px;
   letter-spacing: -1.4px;
   font-size: 1.5em;
   font-family: "Arial Narrow", sans-serif;
+  font-style:italic;
   text-align: right;
+}
+
+#social{
+z-index: 4;
+padding: 0.4em 1em 0.4em 1em;
+  font-style:italic;
+  position: fixed;
+  top: 10em;
+  right: 0;
+  background-color: #a83;
+  line-height: 1.4em;
+  word-spacing: 0.4em;
+  font-size: 1.2em;
+  font-family: "Arial Narrow", sans-serif;
+  text-align: right;
+}
+
+#social a{
+color: #eee;
+font-style:normal;
+padding: 2px 6px 2px 6px;
+  display: inline;
+  background-color: #111;
+}
+
+#social a:hover{
+color: #fff;
+font-weight: bolder;
 }
 
 .options{
@@ -366,10 +395,10 @@ font-size: 0.9em;
 
 .bar:hover{
 border-left: 0.6em solid #333;
-color: #ddd;
+color: #ccc;
 text-align: left;
 display: block;
-  background-color: #24f;
+  background-color: #0B61A4;
 }
 
 .bar:hover span{
@@ -500,13 +529,13 @@ border-right: 4px solid #dc5;
 
 
 .links a:hover{
-border-left: 4px solid #555;
-border-right: 4px solid #555;
-  background: #28d;
+border-left: 4px solid #333;
+border-right: 4px solid #333;
+  background: #dc5;
   line-height: 2em;
   padding: 6px;
   font-weight: bold;
-  color: #eee;
+  color: #111;
 }
 
 .copyright{
@@ -566,8 +595,8 @@ font-size: 0.8em;
 
 .editor span.off:hover{
 border-top: 3px solid #333;
-  background-color: #7e4;
-  color: #fff;
+  background-color: #ee7;
+  color: #111;
   font-weight: bolder;
 
 }
@@ -576,7 +605,7 @@ border-top: 3px solid #333;
 border-top: 3px solid #555;
   background-color: #ee7;
   font-weight: bolder;
-  color: #111;
+  color: #ccc;
     -webkit-transition:none;
   -o-transition:none;
   -moz-transition:none;
@@ -590,7 +619,7 @@ font-size: 0.8em;
   cursor: pointer;
   text-align: center;
 border-top: 3px solid #333;
-  background-color: #ee7;
+  background-color: #7e4;
   color: #333;
   font-weight: bolder;
 }
@@ -598,9 +627,9 @@ border-top: 3px solid #333;
 .editor span.on:hover{
 border-top: 3px solid #333;
   background-color: #7e4;
-  color: #fff;
+  color: #333;
   font-weight: bolder;
-
+  font-style:italic;
 }
 
 

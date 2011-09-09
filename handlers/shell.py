@@ -47,6 +47,7 @@ try:
   from google.appengine.ext import db
   from google.appengine.ext import webapp
   from google.appengine.ext.webapp import template
+  from google.appengine.ext.webapp.util import login_required
   INITIAL_UNPICKLABLES = [
     'from google.appengine.ext import db',
     'from google.appengine.api import users',
@@ -57,6 +58,7 @@ except ImportError:
   from google3.apphosting.ext import db
   from google3.apphosting.ext import webapp
   from google3.apphosting.ext.webapp import template
+  from google3.apphosting.ext.webapp.util import login_required
   INITIAL_UNPICKLABLES = [
     'from google3.apphosting.ext import db',
     'from google3.apphosting.api import users',
@@ -224,18 +226,7 @@ class ShellPageHandler(webapp.RequestHandler):
 
     notifications="Hola, %s!" % users.get_current_user().nickname()
     
-    greetings = """
-Welcome to IHeartPy console.
-Goodbye to shitty tutorials.
-Start coding right away.
-Type python commands below and hit Enter.
-For inserting new lines hit: Shift+Enter
-For Undo or Redo: Use Ctrl+Up or Ctrl+Down
-
-To get started type #Hello and hit enter.
-Happy coding.
-
-"""
+    greetings = """Welcome to IHeartPy console.\nStart coding right away.\nType python commands below and hit Enter.\nFor new lines hit: Shift+Enter\n\nTo get started, type #Hello and hit enter.\nHappy coding.\n"""
     
     vars = { 'server_software': os.environ['SERVER_SOFTWARE'],
              'python_version': sys.version,
@@ -258,6 +249,7 @@ Happy coding.
 class StatementHandler(webapp.RequestHandler):
   """Evaluates a python statement in a given session and returns the result."""
 
+  @login_required
   def get(self):
     # extract the statement to be run
     statement = self.request.get('statement')
@@ -278,7 +270,9 @@ class StatementHandler(webapp.RequestHandler):
     if lol == '1':
       statement = lolpython.to_python(statement)
       import sys as _lol_sys
-	
+
+    self.response.clear()
+
     if "mobile" in self.request.user_agent.lower():
         self.response.headers['Content-Type'] = 'text/html'
         highlighter.Parser(statement,self.response.out).format()
