@@ -156,7 +156,7 @@ class ShellPageHandler(webapp.RequestHandler):
     session_url = '/shell'
     quote=getQuote()
 
-    notifications="Hola, " + users.get_current_user().nickname() +"!"
+    notifications="Hola, %s!" % users.get_current_user().nickname()
     
     vars = { 'server_software': os.environ['SERVER_SOFTWARE'],
              'python_version': sys.version,

@@ -40,6 +40,7 @@ sys.path.append(os.path.abspath(''))
 
 import lolpython
 import aiml
+import highlighter
 
 try:
   from google.appengine.api import users
@@ -85,7 +86,6 @@ INITIAL_UNPICKLABLES += [
   'class Foo(db.Expando):\n  pass',
   ]
 
-#INITIAL_UNPICKLABLES = []
 class Session(db.Model):
   """A shell session. Stores the session's globals.
 
@@ -183,6 +183,24 @@ def getQuote():
   library=libraryFile.readlines()
   return (random.choice(library)).split(';')
 
+def responder(statement,chat):
+  """Returns a randomized quotation"""
+  kernel=aiml.Kernel()
+  kernel.verbose(False)
+  current_lesson = 1.1 #TODO: Lesson Initializr
+  kernel.bootstrap(brainFile='rawAIML/lesson%d.brn'%(int(current_lesson)),commands=[])
+  statement=statement.replace('=',' EQUALS ').replace('**',' POW ').replace('*',' MUL ').replace('(','').replace(')','').replace('"','')
+  chat=chat.replace('=',' EQUALS ').replace('**',' POW ').replace('*',' MUL ').replace('(','').replace(')','').replace('"','')
+  kernel.setPredicate('topic','lesson%d'%(int(current_lesson*10)%10))
+  kernel.setBotPredicate('user',users.get_current_user().nickname())
+  kernel.setPredicate('gender','male') #TODO: gert gender info
+  reply=''
+  if kernel.respond(statement).split('#')[0]:
+      reply+='\n#'+(kernel.respond(statement).split('#')[0].replace('\n','\n#'))
+  if kernel.respond(chat):
+      reply+='\n#'+kernel.respond(chat).replace('\n','\n#')
+  return reply+'\n'
+
 class ShellPageHandler(webapp.RequestHandler):
   """Creates a new session and renders the shell.html template."""
 
@@ -204,13 +222,27 @@ class ShellPageHandler(webapp.RequestHandler):
     session_url = '/shell'
     quote=getQuote()
 
-    notifications="Hola, &#223;-Tester!"
+    notifications="Hola, %s!" % users.get_current_user().nickname()
+    
+    greetings = """
+Welcome to IHeartPy console.
+Goodbye to shitty tutorials.
+Start coding right away.
+Type python commands below and hit Enter.
+For inserting new lines hit: Shift+Enter
+For Undo or Redo: Use Ctrl+Up or Ctrl+Down
+
+To get started type #Hello and hit enter.
+Happy coding.
+
+"""
     
     vars = { 'server_software': os.environ['SERVER_SOFTWARE'],
              'python_version': sys.version,
              'session': str(session_key),
              'user': users.get_current_user(),
              'login_url': users.create_login_url(session_url),
+             'greetings': greetings,
              'logout_url': users.create_logout_url('/'),
              'notifications': notifications,
              'quotation': quote[0],
@@ -227,8 +259,6 @@ class StatementHandler(webapp.RequestHandler):
   """Evaluates a python statement in a given session and returns the result."""
 
   def get(self):
-    self.response.headers['Content-Type'] = 'text/plain'
-
     # extract the statement to be run
     statement = self.request.get('statement')
     if not statement:
@@ -237,21 +267,32 @@ class StatementHandler(webapp.RequestHandler):
     # the python compiler doesn't like network line endings
     statement = statement.replace('\r\n', '\n')
 
+    reply=''
+    chat=(''.join([statement,'#']).split('#')[1])
+
     # add a couple newlines at the end of the statement. this makes
     # single-line expressions such as 'class Foo: pass' evaluate happily.
-    statement += '\n\n'
+    statement += '\n'
 
     lol = self.request.get('lol')
     if lol == '1':
       statement = lolpython.to_python(statement)
       import sys as _lol_sys
 	
-    self.response.out.write(statement)
+    if "mobile" in self.request.user_agent.lower():
+        self.response.headers['Content-Type'] = 'text/html'
+        highlighter.Parser(statement,self.response.out).format()
+    else:
+        self.response.headers['Content-Type'] = 'text/text'
+        self.response.out.write(statement)
+        statement = statement.split('#')[0]
+        reply=responder(statement,chat)
 
     # log and compile the statement up front
     try:
       logging.info('Compiling and evaluating:\n%s' % statement)
-      compiled = compile(statement, '<string>', 'single')
+      if statement.strip():
+          compiled = compile(statement, '<string>', 'single')
     except:
       self.response.out.write(traceback.format_exc())
       return
@@ -297,12 +338,14 @@ class StatementHandler(webapp.RequestHandler):
         try:
           sys.stdout = self.response.out
           sys.stderr = self.response.out
-          exec compiled in statement_module.__dict__
+          if statement.strip():
+                exec compiled in statement_module.__dict__
         finally:
           sys.stdout = old_stdout
           sys.stderr = old_stderr
       except:
         self.response.out.write(traceback.format_exc())
+        self.response.out.write(responder('some stupid error',''))
         return
 
       # extract the new globals that this statement added
@@ -321,6 +364,10 @@ class StatementHandler(webapp.RequestHandler):
       else:
         # this statement didn't add any unpicklables. pickle and store the
         # new globals back into the datastore.
+        session.set_global('help', 'Use the instructions link at the bottom for more info.')
+        session.set_global('author', 'Diwank Singh')
+        session.set_global('about', 'The friendly Python Instructor')
+        session.set_global('inspiration', 'Ila Nitin Gokarn')
         for name, val in new_globals.items():
           if not name.startswith('__'):
             session.set_global(name, val)
@@ -328,6 +375,7 @@ class StatementHandler(webapp.RequestHandler):
     finally:
       sys.modules['__main__'] = old_main
 
+    self.response.out.write(reply)
     session.put()
 
 
