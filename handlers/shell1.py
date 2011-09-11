@@ -41,6 +41,7 @@ sys.path.append(os.path.abspath(''))
 
 import lolpython
 import aiml
+from models import *
 
 try:
   from google.appengine.api import users
@@ -72,30 +73,6 @@ INITIALIZERS = [
   'class Foo(db.Expando):\n  pass',
   ]
 
-class ShellUser(db.Model):
-  """Holds user properties."""
-  
-  name = db.StringProperty(required=True)
-  role = db.StringProperty(required=True, choices=set(["admin", "tester", "student"]), indexed=False)
-  first_access_date = db.DateProperty(auto_now_add=True)
-  last_access_date = db.DateProperty(auto_now=True)
-  course_completed = db.BooleanProperty(required=True)
-  account = db.UserProperty(required=True)
-  email = db.EmailProperty(required=True)
-  current_lesson = db.RatingProperty(required=True)
-  im_handle = db.IMProperty(indexed=False)
-
-class History(db.Model):
-  """History holds statements history for a kiddo.
-  
-  Using Text instead of string is an optimization. We don't query on any of
-  these properties, so they don't need to be indexed.
-  """
-  account = db.UserProperty(required=True)
-  statements = db.ListProperty(db.Text)
-  number = db.IntegerProperty()
-  access_time = db.DateTimeProperty(auto_now=True)
-
 def getQuote():
   """Returns a randomized quotation"""
   libraryFile=open('../site/quotes.txt','r')
@@ -104,26 +81,34 @@ def getQuote():
 
 def get_memcached_values(session_key):
   """Retrieves all statements in history for given namespace"""
-  if not memcache.get(key='counter',namespace=session_key):
+  
+  counter=memcache.get(key='counter',namespace=session_key)
+  
+  if not counter:
     memcache.add(key='counter',time=7500,value=0,namespace=session_key)
     return []
   
-  counter=memcache.get(key='counter',namespace=session_key)
   statement_list=[]
+  key_list=[]
+
   flag=1
   while counter >flag:
-    statement_list.append((urllib.unquote(memcache.get(key='statement'+str(flag),namespace=session_key))).decode("string-escape"))
+    key_list.append('statement'+str(flag))
     flag+=1
-  
+
+  returned_list = memcache.get_multi(key_list,namespace=session_key).values()
+  for value in returned_list:
+      statement_list.append((urllib.unquote(value)).decode("string-escape"))
   return statement_list
 
 def add_memcached_statement(statement, session_key):
   """Retrieves all statements in history for given namespace"""
-  if not memcache.get(key='counter',namespace=session_key):
+  counter=memcache.get(key='counter',namespace=session_key)
+  if not counter:
     memcache.add(key='counter',value=0,time=7500,namespace=session_key)
   
   memcache.incr(key='counter',namespace=session_key,initial_value=0)
-  counter=memcache.get(key='counter',namespace=session_key)
+  
   try:
     memcache.add(key='statement'+str(counter),time=7500,value=urllib.quote(statement),namespace=session_key)
   except:
@@ -131,8 +116,6 @@ def add_memcached_statement(statement, session_key):
     return False
   
   return True
-  
-
 
 class ShellPageHandler(webapp.RequestHandler):
   """Creates a new session and renders the shell.html template."""

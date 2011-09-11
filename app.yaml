@@ -11,23 +11,23 @@ handlers:
 
 - url: /
   script: handlers/main.py
-  secure: always
+  secure: optional
 
 - url: /resources
   script: handlers/main.py
-  secure: always
+  secure: optional
 
 - url: /instructions
   script: handlers/main.py
-  secure: always
+  secure: optional
 
 - url: /wth
   script: handlers/main.py
-  secure: always
+  secure: optional
 
 - url: /download
   script: handlers/zipme.py
-  secure: always
+  secure: optional
 
 - url: /shell
   script: handlers/shell.py
@@ -156,7 +156,7 @@ handlers:
   
 - url: /.*
   script: handlers/main.py
-  secure: always
+  secure: optional
 
 #########################
 builtins:

@@ -296,6 +296,27 @@ h3 {
   letter-spacing: -1px;
 }
 
+
+.content h3{
+  text-align: center;
+  font-family: "Lucida Sans Unicode", sans-serif;
+  font-size: 2em;
+  font-weight: bold;
+  margin: -0.5em 0.5em -0.2em -0.5em;
+  color:#0B61A4;
+  letter-spacing: -1px;
+}
+
+.content ul{
+  text-align: center;
+  font-family: "Lucida Sans Unicode", sans-serif;
+  font-size: 1em;
+  font-weight: bold;
+  margin: -0.5em 0.5em -0.2em -0.5em;
+  letter-spacing: -1px;
+  list-style:none;
+}
+
 blockquote {
 margin: 0;
 font-size: 1.2em;

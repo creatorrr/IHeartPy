@@ -378,14 +378,16 @@ text-align: center;
 /*Editor*/
 
 .editor textarea{
-<<<<<<< HEAD
-height: auto;
-width: 780px;
-=======
 height: 8em;
 width: 100%;
->>>>>>> master
 margin:auto;
+}
+
+#display{
+font-family: monospace;
+padding:1em;
+white-space: pre;
+font-weight:bold;
 }
 
 

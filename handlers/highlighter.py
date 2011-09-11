@@ -92,7 +92,7 @@ class Parser:
                 style = ''
 
                 if toktype == token.ERRORTOKEN:
-                        style = ' style="border: solid 1.5pt #FF0000;"'
+                        style = ' style=""'
 
                 # Send text
                 self.out.write('<font color="%s"%s>' % (color,style))

@@ -83,7 +83,7 @@ function trim(str){
 				};
 
 		shellClient.printResult = function(result) {
-				result='\n>>> '+result;
+				result='\n\n>>> '+result;
 				shellEditor.save();
 				shellEditor.setValue('');
 				shellDisplay.setValue(shellDisplay.getValue()+result);

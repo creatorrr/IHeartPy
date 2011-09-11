@@ -84,7 +84,14 @@
 			
 			<form class="display" id="shell-display"><textarea id="display" readonly>{{ server_software }}
 Python {{ python_version }}
-"""{{ greetings }}"""</textarea></form>
+"""Welcome to IHeartPy console.
+Start coding right away.
+Type python commands below and hit Enter.
+For new lines hit: Shift+Enter
+For Undo or Redo: Use Ctrl+ Up or Down
+
+{{ greetings }}
+Happy coding."""</textarea></form>
 
 			<span id="shellLOL1" class="off" onclick="toggleLOL();return false;">LOL</span><span class="off" onclick="toggleTheme();return false;">theme</span><span onclick="printer(shellDisplay.getValue());" class="off">print</span><span onclick="shellDisplay.setValue('');return false;" class="off">clear</span>
 			<form class="prompt" id="shell-prompt"><textarea id="prompt">#Hello</textarea></form>

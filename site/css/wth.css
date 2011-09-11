@@ -344,11 +344,7 @@ display:none;
 
 
 a{
-<<<<<<< HEAD
-  display:block;
-=======
   display:inline;
->>>>>>> master
   color: inherit;
   text-decoration: none;
   cursor: crosshair;

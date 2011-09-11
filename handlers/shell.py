@@ -209,6 +209,7 @@ class ShellPageHandler(webapp.RequestHandler):
   def get(self):
     # set up the session. TODO: garbage collect old shell sessions
     session_key = self.request.get('session')
+    is_mobile = False
     if session_key:
       session = Session.get(session_key)
     else:
@@ -218,15 +219,19 @@ class ShellPageHandler(webapp.RequestHandler):
       session_key = session.put()
 
     template_file = os.path.abspath('../site/shell.html')
-    if "mobile" in self.request.user_agent.lower():
-		template_file = os.path.abspath('../site/mobile-shell.html')
+    
+    if "mobi" in self.request.user_agent.lower():
+        is_mobile = True
+    
+    if is_mobile:
+		template_file = os.path.abspath('../site/mobile.html')
 
     session_url = '/shell'
     quote=getQuote()
 
     notifications="Hola, %s!" % users.get_current_user().nickname()
     
-    greetings = """Welcome to IHeartPy console.\nStart coding right away.\nType python commands below and hit Enter.\nFor new lines hit: Shift+Enter\n\nTo get started, type #Hello and hit enter.\nHappy coding.\n"""
+    greetings = "To get started, type #Hello and hit enter.\n"
     
     vars = { 'server_software': os.environ['SERVER_SOFTWARE'],
              'python_version': sys.version,
@@ -258,6 +263,7 @@ class StatementHandler(webapp.RequestHandler):
 
     # the python compiler doesn't like network line endings
     statement = statement.replace('\r\n', '\n')
+    is_mobile = False
 
     reply=''
     chat=(''.join([statement,'#']).split('#')[1])
@@ -265,6 +271,12 @@ class StatementHandler(webapp.RequestHandler):
     # add a couple newlines at the end of the statement. this makes
     # single-line expressions such as 'class Foo: pass' evaluate happily.
     statement += '\n'
+    
+    if "mobi" in self.request.user_agent.lower():
+        is_mobile = True
+    
+    mobile_template=[os.path.abspath('../site/mobile.part.html'),os.path.abspath('../site/mobile.part2.html')]
+    tidbit = '</div><form name="shell" action="shell.do" method="get"><textarea id="prompt" name="statement">#Type Away!</textarea><input id="shellSessionId" type="hidden" name="session" value="'
 
     lol = self.request.get('lol')
     if lol == '1':
@@ -273,14 +285,16 @@ class StatementHandler(webapp.RequestHandler):
 
     self.response.clear()
 
-    if "mobile" in self.request.user_agent.lower():
+    if is_mobile:
         self.response.headers['Content-Type'] = 'text/html'
+        self.response.out.write(open(mobile_template[0]).read())
         highlighter.Parser(statement,self.response.out).format()
     else:
         self.response.headers['Content-Type'] = 'text/text'
         self.response.out.write(statement)
-        statement = statement.split('#')[0]
-        reply=responder(statement,chat)
+    
+    statement = statement.split('#')[0] #TODO: change this.
+    reply=responder(statement,chat)
 
     # log and compile the statement up front
     try:
@@ -300,7 +314,8 @@ class StatementHandler(webapp.RequestHandler):
     statement_module.__builtins__ = __builtin__
 
     # load the session from the datastore
-    session = Session.get(self.request.get('session'))
+    session_id = self.request.get('session')
+    session = Session.get(session_id)
 
     # swap in our custom module for __main__. then unpickle the session
     # globals, run the statement, and re-pickle the session globals, all
@@ -370,8 +385,11 @@ class StatementHandler(webapp.RequestHandler):
       sys.modules['__main__'] = old_main
 
     self.response.out.write(reply)
+    if is_mobile:
+        self.response.out.write(tidbit)
+        self.response.out.write(session_id)
+        self.response.out.write(open(mobile_template[1]).read())
     session.put()
-
 
 def main():
   application = webapp.WSGIApplication(
