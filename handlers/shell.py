@@ -41,6 +41,7 @@ sys.path.append(os.path.abspath(''))
 import lolpython
 import aiml
 import highlighter
+from models import *
 
 try:
   from google.appengine.api import users
@@ -88,133 +89,45 @@ INITIAL_UNPICKLABLES += [
   'class Foo(db.Expando):\n  pass',
   ]
 
-class Session(db.Model):
-  """A shell session. Stores the session's globals.
-
-  Each session globals is stored in one of two places:
-
-  If the global is picklable, it's stored in the parallel globals and
-  global_names list properties.
-  
-  If the global is not picklable (e.g. modules, classes, and functions), or if
-  it was created by the same statement that created an unpicklable global,
-  it's not stored directly. Instead, the statement is stored in the
-  unpicklables list property. On each request, before executing the current
-  statement, the unpicklable statements are evaluated to recreate the
-  unpicklable globals.
-
-  The unpicklable_names property stores all of the names of globals that were
-  added by unpicklable statements. When we pickle and store the globals after
-  executing a statement, we skip the ones in unpicklable_names.
-
-  Using Text instead of string is an optimization. We don't query on any of
-  these properties, so they don't need to be indexed.
-  """
-  
-  global_names = db.ListProperty(db.Text)
-  globals = db.ListProperty(db.Blob)
-  unpicklable_names = db.ListProperty(db.Text)
-  unpicklables = db.ListProperty(db.Text)
-
-  def set_global(self, name, value):
-    """Adds a global, or updates it if it already exists.
-
-    Also removes the global from the list of unpicklable names.
-
-    Args:
-      name: the name of the global to remove
-      value: any picklable value
-    """
-    blob = db.Blob(pickle.dumps(value))
-
-    if name in self.global_names:
-      index = self.global_names.index(name)
-      self.globals[index] = blob
-    else:
-      self.global_names.append(db.Text(name))
-      self.globals.append(blob)
-
-    self.remove_unpicklable_name(name)
-
-  def remove_global(self, name):
-    """Removes a global, if it exists.
-
-    Args:
-      name: string, the name of the global to remove
-    """
-    if name in self.global_names:
-      index = self.global_names.index(name)
-      del self.global_names[index]
-      del self.globals[index]
-
-  def globals_dict(self):
-    """Returns a dictionary view of the globals.
-    """
-    return dict((name, pickle.loads(val))
-                for name, val in zip(self.global_names, self.globals))
-
-  def add_unpicklable(self, statement, names):
-    """Adds a statement and list of names to the unpicklables.
-
-    Also removes the names from the globals.
-
-    Args:
-      statement: string, the statement that created new unpicklable global(s).
-      names: list of strings; the names of the globals created by the statement.
-    """
-    self.unpicklables.append(db.Text(statement))
-
-    for name in names:
-      self.remove_global(name)
-      if name not in self.unpicklable_names:
-        self.unpicklable_names.append(db.Text(name))
-
-  def remove_unpicklable_name(self, name):
-    """Removes a name from the list of unpicklable names, if it exists.
-
-    Args:
-      name: string, the name of the unpicklable global to remove
-    """
-    if name in self.unpicklable_names:
-      self.unpicklable_names.remove(name)
-
-
 def getQuote():
   """Returns a randomized quotation"""
   libraryFile=open('../site/quotes.txt','r')
   library=libraryFile.readlines()
   return (random.choice(library)).split(';')
 
-def responder(statement,chat):
-  """Returns a randomized quotation"""
+def responder(statement,chat,user):
+  """Lesson Handler"""
   kernel=aiml.Kernel()
   kernel.verbose(False)
-  current_lesson = 1.1 #TODO: Lesson Initializr
+  current_lesson = user.current_lesson
   kernel.bootstrap(brainFile='rawAIML/lesson%d.brn'%(int(current_lesson)),commands=[])
-  statement=statement.replace('=',' EQUALS ').replace('**',' POW ').replace('*',' MUL ').replace('(','').replace(')','').replace('"','')
-  chat=chat.replace('=',' EQUALS ').replace('**',' POW ').replace('*',' MUL ').replace('(','').replace(')','').replace('"','')
-  kernel.setPredicate('topic','lesson%d'%(int(current_lesson*10)%10))
-  kernel.setBotPredicate('user',users.get_current_user().nickname())
+  statement=statement.replace('=',' EQUALS ').replace('**',' POW ').replace('*',' MUL ').replace('(',' ').replace(')',' ').replace('"',' ')
+  chat=chat.replace('=',' EQUALS ').replace('**',' POW ').replace('*',' MUL ').replace('(',' ').replace(')',' ').replace('"',' ')
+  kernel.setPredicate('topic','sublesson%d'%(int(current_lesson*10)%10))
+  kernel.setBotPredicate('user',user.name)
   kernel.setPredicate('gender','male') #TODO: gert gender info
   reply=''
   if kernel.respond(statement).split('#')[0]:
       reply+='\n#'+(kernel.respond(statement).split('#')[0].replace('\n','\n#'))
   if kernel.respond(chat):
       reply+='\n#'+kernel.respond(chat).replace('\n','\n#')
+  user.current_lesson = float(kernel.getPredicate('lesson'))
+  user.put()
   return reply+'\n'
 
 class ShellPageHandler(webapp.RequestHandler):
   """Creates a new session and renders the shell.html template."""
 
   def get(self):
-    # set up the session. TODO: garbage collect old shell sessions
+    # set up the session. TODO: garbage collect old shell sessions. Try cron backend.
+
     session_key = self.request.get('session')
     is_mobile = False
     if session_key:
       session = Session.get(session_key)
     else:
       # create a new session
-      session = Session()
+      session = Session(email = users.get_current_user().email())
       session.unpicklables = [db.Text(line) for line in INITIAL_UNPICKLABLES]
       session_key = session.put()
 
@@ -239,13 +152,14 @@ class ShellPageHandler(webapp.RequestHandler):
              'user': users.get_current_user(),
              'login_url': users.create_login_url(session_url),
              'greetings': greetings,
-             'logout_url': users.create_logout_url('/'),
+             'logout_url': users.create_logout_url('/shell.delete?session=%s' % str(session_key)),
              'notifications': notifications,
              'quotation': quote[0],
              'quotation_author': quote[1],
              'quotation_link': quote[2],
              'title': 'Shell',
              'analytics_id':_GA_ID,
+             'badge_url': '/badges?email=%s' % users.get_current_user().email(),
              }
     rendered = webapp.template.render(template_file, vars, debug=_DEBUG)
     self.response.out.write(rendered)
@@ -257,6 +171,24 @@ class StatementHandler(webapp.RequestHandler):
   @login_required
   def get(self):
     # extract the statement to be run
+    
+    _DEFAULT_ROLE = "student"
+    user=users.get_current_user()
+    query=ShellUser.all()
+    query.filter("account = ", user)
+    db_user = query.get()
+    
+    if not db_user:
+       logging.info("New user: %s registered" % user.nickname())
+       db_user = ShellUser(name=user.nickname(),
+        									role=_DEFAULT_ROLE,
+        									course_completed = False,
+        									account = user,
+        									email = user.email(),
+      	  								current_lesson = 1.1)
+       db_user.put()
+
+    
     statement = self.request.get('statement')
     if not statement:
       return
@@ -294,7 +226,7 @@ class StatementHandler(webapp.RequestHandler):
         self.response.out.write(statement)
     
     statement = statement.split('#')[0] #TODO: change this.
-    reply=responder(statement,chat)
+    reply=responder(statement,chat,db_user)
 
     # log and compile the statement up front
     try:
@@ -303,6 +235,7 @@ class StatementHandler(webapp.RequestHandler):
           compiled = compile(statement, '<string>', 'single')
     except:
       self.response.out.write(traceback.format_exc())
+      self.response.out.write(responder('some stupid error','',db_user))
       return
 
     # create a dedicated module to be used as this statement's __main__
@@ -354,7 +287,7 @@ class StatementHandler(webapp.RequestHandler):
           sys.stderr = old_stderr
       except:
         self.response.out.write(traceback.format_exc())
-        self.response.out.write(responder('some stupid error',''))
+        self.response.out.write(responder('some stupid error','',db_user))
         return
 
       # extract the new globals that this statement added
@@ -391,10 +324,25 @@ class StatementHandler(webapp.RequestHandler):
         self.response.out.write(open(mobile_template[1]).read())
     session.put()
 
+
+class LogoutHandler(webapp.RequestHandler):
+  """Deletes session and redirects to feedback form."""
+
+  def get(self):
+    # set up the session. TODO: garbage collect old shell sessions
+    session_key = self.request.get('session')
+    if session_key:
+      session = Session.get(session_key)
+
+    session.delete()
+    self.redirect("https://docs.google.com/spreadsheet/viewform?formkey=dG5OSlBTTGJrYUVjVjloRXhjYlE3c2c6MQ")
+
+
 def main():
   application = webapp.WSGIApplication(
     [('/shell', ShellPageHandler),
-     ('/shell.do', StatementHandler)], debug=_DEBUG)
+     ('/shell.do', StatementHandler),
+     ('/shell.delete', LogoutHandler)], debug=_DEBUG)
   wsgiref.handlers.CGIHandler().run(application)
 
 

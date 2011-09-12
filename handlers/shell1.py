@@ -79,43 +79,58 @@ def getQuote():
   library=libraryFile.readlines()
   return random.choice(library).split(';')
 
-def get_memcached_values(session_key):
-  """Retrieves all statements in history for given namespace"""
-  
-  counter=memcache.get(key='counter',namespace=session_key)
-  
-  if not counter:
-    memcache.add(key='counter',time=7500,value=0,namespace=session_key)
-    return []
-  
-  statement_list=[]
-  key_list=[]
+class Cache:
+    """Handles storing and retrieving statements from memcache."""
+    
+    def __init__(self, session_key):
+        self.session_key = session_key
+        self._TIMEOUT = 7500
+        
+    def get_values(self):
+      """Retrieves all statements in history for given namespace"""
+      old_stdout = sys.stdout
+      sys.stdout = sys.stderr
+      counter=memcache.get(key='counter',namespace=self.session_key)
+      
+      if not counter:
+        memcache.add(key='counter',time=self._TIMEOUT,value=0,namespace=self.session_key)
+        sys.stdout = old_stdout
+        return []
+      
+      statement_list=[]
+      key_list=[]
+    
+      flag=1
+      while counter >flag:
+        key_list.append('statement'+str(flag))
+        flag+=1
+    
+      returned_list = memcache.get_multi(key_list,namespace=self.session_key).values()
+      for value in returned_list:
+          statement_list.append((urllib.unquote(value)).decode("string-escape"))
+      
+      sys.stdout = old_stdout
+      return statement_list
+    
+    def add_statement(self, statement):
+      """Retrieves all statements in history for given namespace"""
+      old_stdout = sys.stdout
+      sys.stdout = sys.stderr
+      counter=memcache.get(key='counter',namespace=self.session_key)
+      if not counter:
+        memcache.add(key='counter',value=0,time=self._TIMEOUT,namespace=self.session_key)
+      
+      memcache.incr(key='counter',namespace=self.session_key,initial_value=0)
+      
+      try:
+        memcache.add(key='statement'+str(counter),time=self._TIMEOUT,value=urllib.quote(statement),namespace=self.session_key)
+      except:
+        logging.error("Memcache miss")
+        sys.stdout = old_stdout
+        return False
 
-  flag=1
-  while counter >flag:
-    key_list.append('statement'+str(flag))
-    flag+=1
-
-  returned_list = memcache.get_multi(key_list,namespace=session_key).values()
-  for value in returned_list:
-      statement_list.append((urllib.unquote(value)).decode("string-escape"))
-  return statement_list
-
-def add_memcached_statement(statement, session_key):
-  """Retrieves all statements in history for given namespace"""
-  counter=memcache.get(key='counter',namespace=session_key)
-  if not counter:
-    memcache.add(key='counter',value=0,time=7500,namespace=session_key)
-  
-  memcache.incr(key='counter',namespace=session_key,initial_value=0)
-  
-  try:
-    memcache.add(key='statement'+str(counter),time=7500,value=urllib.quote(statement),namespace=session_key)
-  except:
-    logging.error("Memcache miss")
-    return False
-  
-  return True
+      sys.stdout = old_stdout
+      return True
 
 class ShellPageHandler(webapp.RequestHandler):
   """Creates a new session and renders the shell.html template."""
@@ -163,13 +178,14 @@ class StatementHandler(webapp.RequestHandler):
 
   def get(self):
 
-    _DEFAULT_ROLE = "tester"
+    _DEFAULT_ROLE = "tester"   #change to student
     user=users.get_current_user()
     query=ShellUser.all()
     query.filter("account = ", user)
     db_user = query.get()
     
     if not db_user:
+       logging.info("New user: %s registered" % user.nickname())
        db_user = ShellUser(name=user.nickname(),
         									role=_DEFAULT_ROLE,
         									course_completed = False,
@@ -211,7 +227,7 @@ class StatementHandler(webapp.RequestHandler):
       logging.info('Compiling and evaluating:\n%s' % statement)
       compiled = compile(statement, '<string>', 'single')
     except:
-      self.response.out.write(traceback.format_exc())
+      self.response.out.write(traceback.format_exc())   #Reply here
       return
 
     # create a dedicated module to be used as this statement's __main__
@@ -224,6 +240,7 @@ class StatementHandler(webapp.RequestHandler):
 
     # load the session
     session_key = self.request.get('session')
+    cache = Cache(session_key)
 
     # swap in our custom module for __main__.
     old_main = sys.modules.get('__main__')
@@ -232,13 +249,18 @@ class StatementHandler(webapp.RequestHandler):
       statement_module.__name__ = '__main__'
 
       # re-evaluate the statements history
-      for code in get_memcached_values(session_key):
+      for code in cache.get_values():
         try:
           compiled_code = compile(code, '<string>', 'single')
           exec compiled_code in statement_module.__dict__
+          self.response.clear()
           logging.info("Executing statements from history:"+code)
         except:
           logging.warning("Error in executing history:"+code)
+
+      # statement added
+      if cache.add_statement(statement):
+          logging.debug('Storing statement in memcache: %s'% statement)
 
       # run!
       old_globals = dict(statement_module.__dict__)
@@ -256,12 +278,9 @@ class StatementHandler(webapp.RequestHandler):
         self.response.out.write(traceback.format_exc())
         return
 
-      # statement added
-      add_memcached_statement(statement, session_key)
-      logging.debug('Storing this statement in memcache.')
-
     finally:
       sys.modules['__main__'] = old_main
+
 
 def main():
   application = webapp.WSGIApplication(
