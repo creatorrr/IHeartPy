@@ -17,30 +17,47 @@
 # limitations under the License.
 
 """
-I Heart Py!
-Main Page Handler
+An interactive, Python instructor.
 
+Uses AIML for interactive tutorial.
+
+Latest build on GitHub http://creatorrr.github.com/IHeartPy
+
+Interpreter state is stored as strings in the memcache so that variables, function
+definitions, and other values in the global and local namespaces can be used
+across commands.
 """
 
+import sys
 import logging
 import os
 import wsgiref.handlers
 import random
+
+sys.path.append(os.path.abspath(''))
+
+from models import *
 
 try:
   from google.appengine.api import users
   from google.appengine.ext import webapp
   from google.appengine.ext.webapp import template
 
+
 except ImportError:
   from google3.apphosting.api import users
   from google3.apphosting.ext import webapp
   from google3.apphosting.ext.webapp import template
 
+
 # Set to True if stack traces should be shown in the browser, etc.
 _DEBUG = False
-_GA_ID = 'UA-25004086-1'
 
+# The entity kind for shell sessions. Feel free to rename to suit your app.
+_GA_ID='UA-25004086-1'
+
+#List of Awards
+_AWARDS = ['Lover', 'Rookie', 'Master', 'Pro', 'God']
 
 def getQuote():
   """Returns a randomized quotation"""
@@ -48,22 +65,25 @@ def getQuote():
   library=libraryFile.readlines()
   return (random.choice(library)).split(';')
 
-class PageHandler(webapp.RequestHandler):
-  """Renders the Front Page."""
+class BadgeHandler(webapp.RequestHandler):
+  """Creates a badge page using email."""
 
-  def get(self,argument):
+  def get(self):
     # set up the session. TODO: garbage collect old shell sessions
+    email = self.request.get('email')
+    query=ShellUser.all()
+    query.filter("email = ", email)
+    user = query.get()
+        
+    if not user:
+       logging.warning("Badge for Email: %s not found" % email)
+       self.redirect("/instructions")
+       
+    level = int(user.current_lesson/4)
+    award = _AWARDS[level]
 
-    
-    if argument in ('','shell','resources','instructions','wth'):
-		template_file = os.path.abspath('../site/'+argument+'.html')
-		template_fallback = os.path.abspath('../site/main.html')
-	
-    else:
-		template_fallback = template_file = os.path.abspath('../site/error.html')
+    template_file = os.path.abspath('../site/badges.html')
 
-    
-    session_url = '/shell'
     quote=getQuote()
 
     vars = { 'user': users.get_current_user(),
@@ -72,20 +92,18 @@ class PageHandler(webapp.RequestHandler):
              'quotation': quote[0],
              'quotation_author': quote[1],
              'quotation_link': quote[2],
-             'title': argument or 'home',
+             'title': 'Badge',
              'analytics_id':_GA_ID,
+             'award': award,
+             'awardee': user.name,
+             'badge_url': '/badges?email=%s' % user.email,
              }
-    try:
-    	rendered = webapp.template.render(template_file, vars, debug=_DEBUG)
-    except:
-    	rendered = webapp.template.render(template_fallback, vars, debug=_DEBUG)
-    
-    logging.info(argument+' called.')
+    rendered = webapp.template.render(template_file, vars, debug=_DEBUG)
     self.response.out.write(rendered)
 
 def main():
   application = webapp.WSGIApplication(
-						    [('/(.*)', PageHandler),], debug=_DEBUG)
+    [('/badges', BadgeHandler),], debug=_DEBUG)
   wsgiref.handlers.CGIHandler().run(application)
 
 
@@ -120,7 +138,6 @@ def is_it_fucking_christmas(yes=False):
 												magdalene.values())))))
 	
 	return shoveThisUpYourAss.insert(0,'thick Bamboo Stick')
-
 
 
 #To understand recursion better, go to the top of this script.

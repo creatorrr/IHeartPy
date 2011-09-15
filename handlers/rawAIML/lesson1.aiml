@@ -7,7 +7,7 @@ http://github,com/creatorrr/IHeartPy
 
 <aiml version="1.0.1" xmlns:aiml="http://alicebot.org/2001/AIML-1.0.1">
 	<!-- lesson -->
-	<topic name="LESSON1">
+	<topic name="SUBLESSON1">
 		<category>
 			<pattern> HELLO </pattern>
 			<template>
@@ -21,6 +21,7 @@ http://github,com/creatorrr/IHeartPy
 Let's Python.
 But, before we do that, why don't you tell us something more about yourself?
 Just type: me="I Wear Fancy Pants." or whatever you love to do.
+You are currently on Lesson <set name="lesson">1.1</set>.
 </sentence>
 			</template>
 		</category>
@@ -93,11 +94,11 @@ Cheerio!
 </sentence>
 			</template>
 		</category>
+	</topic>
 		<category>
 			<pattern>* EQUALS *</pattern>
 			<template><star index="1"/> is set as <star index="2"/></template>
 		</category>
-	</topic>
 		<category>
 			<pattern>SOME STUPID ERROR</pattern>
 			<template>Oops! Something didn't quite work out it seems. Never mind.

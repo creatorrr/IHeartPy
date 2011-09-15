@@ -83,7 +83,7 @@ function trim(str){
 				};
 
 		shellClient.printResult = function(result) {
-				result='\n>>> '+result;
+				result='\n\n>>> '+result;
 				shellEditor.save();
 				shellEditor.setValue('');
 				shellDisplay.setValue(shellDisplay.getValue()+result);
@@ -154,6 +154,7 @@ function shellInit(){
 
 		shellEditor.setMarker(gutter.line,gutter.text);
 		shellEditor.focus();
+		shellDisplay.setValue(shellDisplay.getValue()+'\nTo get started, type #Hello and hit enter.\nHappy coding."""');
 		shellDisplay.refresh();
 		//shellClient.runStatement('');
 		}
