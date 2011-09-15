@@ -55,14 +55,10 @@
 			<form class="display" id="shell-display"><textarea id="display" readonly>{{ server_software }}
 Python {{ python_version }}
 """Welcome to IHeartPy console.
-Start coding right away.
 Type python commands below and hit Enter.
 For new lines hit: Shift+Enter
 For Undo or Redo: Use Ctrl+ Up or Down
-
-To get started, type #Hello and hit enter.
-
-Happy coding."""</textarea></form>
+</textarea></form>
 			<span id="shellLOL1" class="off" onclick="toggleLOL();return false;">LOL</span><span class="off" onclick="toggleTheme();return false;">theme</span><span onclick="printer(shellDisplay.getValue());" class="off">print</span><span onclick="shellDisplay.setValue('');return false;" class="off">clear</span>
 			<form class="prompt" id="shell-prompt"><textarea id="prompt">#Hello</textarea></form>
 		</div>
@@ -88,17 +84,23 @@ Happy coding."""</textarea></form>
 		<script type="text/javascript" src="/js/codemirror/codemirror.js"></script>
 		<script type="text/javascript" src="/js/codemirror/mode/python.js"></script>
 		<script type="text/javascript" src="/js/shell.js"></script>
-		<script type="text/javascript">
-			  var _gaq = _gaq || [];
-			  _gaq.push(['_setAccount', '{{analytics_id}}']);
-			  _gaq.push(['_setDomainName', '.appspot.com']);
-			  _gaq.push(['_trackPageview']);
-			  (function() {
-				var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-				ga.src = 'https://ssl.google-analytics.com/ga.js';
-				var s = document.getElementsByTagName('link')[0]; s.parentNode.insertBefore(ga, s);
-			  })();
-		</script>
+  <script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', '{{analytics_id}}']);
+  _gaq.push(['_setDomainName', 'iheartpy.com']);
+  _gaq.push(['_setAllowHash', false]);
+  _gaq.push(['_setAllowLinker', true]);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+  </script>
+  <script>if(!(window.gat_ || window.gat_.getTracker_))document.write('<script src="js/libs/ga.js"><\/script>');</script>
   <!--[if lt IE 7 ]>
     <script defer src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
     <script defer>window.attachEvent('onload',function(){CFInstall.check({mode:'overlay'})})</script>

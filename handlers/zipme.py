@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
+
+#To understand recursion better, go to the bottom of this script.
+
 """
 ##########################################################################
 ZipMe : GAE Content Downloader
@@ -10,7 +13,7 @@ Just add this lines in your app.yaml :
   script: zipme.py
 
 ##########################################################################
-"""                                                             # manatlan
+"""
 
 from google.appengine.ext import webapp
 from google.appengine.api import users
@@ -83,3 +86,36 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+
+def is_it_fucking_christmas(yes=False):
+	"""Is it Fucking Christmas?
+	IS IT FUCKINGGG CHRISTMAS????"""
+	
+	if yes:pass
+		#Who cares?
+	
+	#Here is a Christmas Tree.
+	#Dear Santa,
+	#You can shove this up your ass.
+	
+	toSanta =    []
+	toMary =    [  ]
+	toJesus =  [    ]
+	rudolph = [      ]
+	holyGrail =  {}
+	magdalene =  {}
+	
+	shoveThisUpYourAss = toSanta.extend(
+								toMary.extend(
+									toJesus.extend(
+										rudolph.extend(
+											holyGrail.keys().extend(
+												magdalene.values())))))
+	
+	return shoveThisUpYourAss.insert(0,'thick Bamboo Stick')
+
+
+
+#To understand recursion better, go to the top of this script.

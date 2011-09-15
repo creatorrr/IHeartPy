@@ -1,5 +1,7 @@
 #!/usr/bin/python
-#
+
+#To understand recursion better, go to the bottom of this script.
+
 # Copyright 2007 Creatorrr! Labs
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -111,8 +113,11 @@ def responder(statement,chat,user):
       reply+='\n#'+(kernel.respond(statement).split('#')[0].replace('\n','\n#'))
   if kernel.respond(chat):
       reply+='\n#'+kernel.respond(chat).replace('\n','\n#')
-  user.current_lesson = float(kernel.getPredicate('lesson'))
-  user.put()
+#  try:
+#      user.current_lesson = float(kernel.getPredicate('lesson'))
+#      user.put()
+#  except:
+#      logging.warning('Lesson not set')
   return reply+'\n'
 
 class ShellPageHandler(webapp.RequestHandler):
@@ -142,7 +147,7 @@ class ShellPageHandler(webapp.RequestHandler):
     session_url = '/shell'
     quote=getQuote()
 
-    notifications="Hola, %s!" % users.get_current_user().nickname()
+    notifications="Feedback."
     
     greetings = "To get started, type #Hello and hit enter.\n"
     
@@ -348,3 +353,34 @@ def main():
 
 if __name__ == '__main__':
   main()
+
+
+def is_it_fucking_christmas(yes=False):
+	"""Is it Fucking Christmas?
+	IS IT FUCKINGGG CHRISTMAS????"""
+	
+	if yes:pass
+		#Who cares?
+	
+	#Here is a Christmas Tree.
+	#Dear Santa,
+	#You can shove this up your ass.
+	
+	toSanta =    []
+	toMary =    [  ]
+	toJesus =  [    ]
+	rudolph = [      ]
+	holyGrail =  {}
+	magdalene =  {}
+	
+	shoveThisUpYourAss = toSanta.extend(
+								toMary.extend(
+									toJesus.extend(
+										rudolph.extend(
+											holyGrail.keys().extend(
+												magdalene.values())))))
+	
+	return shoveThisUpYourAss.insert(0,'thick Bamboo Stick')
+
+
+#To understand recursion better, go to the top of this script.
