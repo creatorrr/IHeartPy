@@ -1,3 +1,5 @@
+@import url(http://fonts.googleapis.com/css?family=Coustard);
+@import url(http://fonts.googleapis.com/css?family=Slackey&text=I%20HeartPy!);
 /*
  * HTML5 ✰ Boilerplate
  *
@@ -35,7 +37,7 @@ html { font-size: 100%; overflow-y: scroll; -webkit-text-size-adjust: 100%; -ms-
 
 body { margin: 0; font-size: 13px; line-height: 1.231; }
 
-body, button, input, select, textarea { font-family: sans-serif; color: #222; }
+body, button, input, select, textarea { font-family: Coustard,sans-serif; color: #222; }
 
 /*
  * Remove text-shadow in selection highlight: h5bp.com/i
@@ -219,7 +221,7 @@ td { vertical-align: top; }
 
 
 body {
-  font-family: Droid Sans, Arial , sans-serif;
+  font-family: Coustard, Arial , sans-serif;
   background-color: #eee;
   line-height: 1.5;
   max-width: 65em;
@@ -366,7 +368,8 @@ height:15em;
 
 h1 {
 word-spacing: 2px;
-letter-spacing: -3px;
+font-family:Slackey;
+letter-spacing: -1px;
 font-size: 3.84em;
 font-weight: bold;
 margin: 0;
@@ -405,7 +408,7 @@ hr{
 
 h3 {
   text-align: right;
-  font-family: "Lucida Sans Unicode", sans-serif;
+  font-family: Coustard,"Lucida Sans Unicode", sans-serif;
   font-size: 1em;
   font-weight: bold;
   margin: -0.5em 0.5em -0.2em -0.5em;
@@ -443,7 +446,7 @@ padding: 0 1em 0 1em;
   word-spacing: 3px;
   letter-spacing: -1.4px;
   font-size: 1.5em;
-  font-family: "Arial Narrow", sans-serif;
+  font-family: Coustard,"Arial Narrow", sans-serif;
   text-align: right;
 }
 

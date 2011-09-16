@@ -54,7 +54,10 @@ class PageHandler(webapp.RequestHandler):
   def get(self,argument):
     # set up the session. TODO: garbage collect old shell sessions
 
-    
+    mobile = False
+    if "mobi" in self.request.user_agent.lower():
+        mobile = True
+
     if argument in ('','shell','resources','instructions','wth'):
 		template_file = os.path.abspath('../site/'+argument+'.html')
 		template_fallback = os.path.abspath('../site/main.html')
@@ -73,7 +76,8 @@ class PageHandler(webapp.RequestHandler):
              'quotation_author': quote[1],
              'quotation_link': quote[2],
              'title': argument or 'home',
-             'analytics_id':_GA_ID,
+             'analytics_id': _GA_ID,
+             'mobile': mobile,
              }
     try:
     	rendered = webapp.template.render(template_file, vars, debug=_DEBUG)
