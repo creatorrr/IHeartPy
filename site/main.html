@@ -30,17 +30,17 @@
   <div id="container">
 		<header>
 		<div class="header">
-			<a href="/"><h1>I Heart Py!</h1></a>
-			<h2> &hearts; The lovable Python instructor. &hearts; </h2>
+			<a href="/"><h1>IHeartPy!</h1></a>
+			<h2> &hearts;The lovable Python Instructor &hearts; </h2>
 			<blockquote>{{ quotation }} - <em>{{ quotation_author }}</em> <a href="{{ quotation_link }}"> [^] </a> </blockquote>
-			{% if not mobile %}<span id="notifications"> <a href="http://iheartpy.uservoice.com/">Feedback</a> </span>
+			{% if not mobile %}
+			<span id="notifications"> <a href="http://iheartpy.uservoice.com/">Feedback</a> </span>
 			<span id="social"> Share:
 				<a href="https://plus.google.com/103920073326155272540/posts/ToCY78opHnW" target="_blank">+</a>
 				<a href="http://www.facebook.com/sharer.php?s=100&p[title]=IHeartPy&p[url]=http://1heartpy.appspot.com/&p[summary]=TheLovablePythoninstructor" target="_blank">f</a>
 				<a href="https://www.twitter.com/share?url=http://1heartpy.appspot.com/&text=IHeartPy&via=meetdagod" target="_blank">t</a>
 				<a href="javascript:window.location=%22http://news.ycombinator.com/submitlink?u=%22+encodeURIComponent(document.location)+%22&t=%22+encodeURIComponent(document.title)" target="_blank">h</a>
 			</span>
-			{% else %}
 			{% endif %}
 		</div>
 		</header>
@@ -51,12 +51,14 @@
 				<span> Get Started. </span>
 				{% if user %}
 				<em>Ship's On Sail, Cap'n!</em>
-					<a href="/shell"> proceed </a>
-					<a href="/wth"> wth? </a>
+					<a href="/shell">proceed</a>
+					<a href="/wth">wth?</a>
 				{% else %}
 				<em>I am sold!</em>
-					<a href="{{ login_url }}"> login </a>
-					<a href="/wth"> what-the-hell? </a>
+					<a href="{{ login_url }}">start</a>
+					{% if not mobile %}
+					<a href="/wth">what-the-hell?</a>
+					{% endif %}
 				{% endif %}
 			</span>
 			<br/>
@@ -78,7 +80,7 @@
 			<br/>
 			<span class="bar">
 			<span> Hacker? </span>
-				<em>Would love to meet you!</em>
+				<em>Would love to meet!</em>
 				<a href="/hackers.txt">&spades;</a>
 				<a href="http://linkedin.com/in/meetdagod" target="_blank">in</a>
 				<a href="http://github.com/creatorrr" target="_blank">GitHub</a>

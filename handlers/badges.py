@@ -70,23 +70,17 @@ class BadgeHandler(webapp.RequestHandler):
 
   def get(self):
     # set up the session. TODO: garbage collect old shell sessions
-    email = self.request.get('email')
-    query=ShellUser.all()
-    query.filter("email = ", email)
-    user = query.get()
-        
-    if not user:
-       logging.warning("Badge for Email: %s not found" % email)
-       self.redirect("/instructions")
-       
-    level = int(user.current_lesson/4)
-    award = _AWARDS[level]
+    try:
+        email = self.request.get('email')
+        query=ShellUser.all()
+        query.filter("email = ", email)
+        user = query.get()
+        level = int(user.current_lesson/4)
+        award = _AWARDS[level]
+        template_file = os.path.abspath('../site/badges.html')
+        quote=getQuote()
 
-    template_file = os.path.abspath('../site/badges.html')
-
-    quote=getQuote()
-
-    vars = { 'user': users.get_current_user(),
+        vars = { 'user': users.get_current_user(),
              'login_url': users.create_login_url('/shell'),
              'logout_url': users.create_logout_url('/'),
              'quotation': quote[0],
@@ -98,8 +92,11 @@ class BadgeHandler(webapp.RequestHandler):
              'awardee': user.name,
              'badge_url': '/badges?email=%s' % user.email,
              }
-    rendered = webapp.template.render(template_file, vars, debug=_DEBUG)
-    self.response.out.write(rendered)
+        rendered = webapp.template.render(template_file, vars, debug=_DEBUG)
+        self.response.out.write(rendered)
+    except:
+        logging.warning("Badge for Email: %s not found" % email)
+        self.redirect("/instructions")
 
 def main():
   application = webapp.WSGIApplication(

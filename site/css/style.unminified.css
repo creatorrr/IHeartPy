@@ -95,6 +95,44 @@ sup { top: -0.5em; }
 sub { bottom: -0.25em; }
 
 
+#tour{
+z-index:5;
+background:transparent;
+display:block;
+}
+#leftpane{
+z-index:6;
+position:fixed;
+background-color:#333;
+left:0;
+height:100%;
+width:15%;
+border-right: #ee4 dashed 3px;
+}
+#rightpane{
+position:fixed;
+background-color:#333;
+right:0;
+height:100%;
+width:15%;
+border-left: #ee4 dashed 3px;
+}
+#toppane{
+position:fixed;
+background-color:#333;
+top:0;
+height:15%;
+width:100%;
+border-bottom: #ee4 dashed 3px;
+}
+#bottompane{
+position:fixed;
+background-color:#333;
+bottom:0;
+height:15%;
+width:100%;
+border-top: #ee4 dashed 3px;
+}
 /* =============================================================================
    Lists
    ========================================================================== */

@@ -35,8 +35,8 @@
 	<div id="container">
 		<header>
 		<div class="header">
-			<a href="/"><h1>I Heart Py!</h1></a>
-			<h2> &hearts; The lovable Python instructor. &hearts; </h2>
+			<a href="/"><h1>IHeartPy!</h1></a>
+			<h2> &hearts;The lovable Python Instructor&hearts; </h2>
 			<blockquote>{{ quotation }} - <em>{{ quotation_author }}</em> <a href="{{ quotation_link }}"> [^] </a> </blockquote>
 			<span id="notifications"> <a href="http://iheartpy.uservoice.com/">{{ notifications }}</a> </span>
 			<span id="social"> Share:
@@ -81,6 +81,21 @@ For Undo or Redo: Use Ctrl+ Up or Down
 		</div>
 		</footer>
 	</div> <!--! end of #container -->
+	{% if first_time %}
+	<div id ="tour">
+		<div id="leftpane"></div>
+		<div id="rightpane"></div>
+		<div id="toppane"></div>
+		<div id="bottompane"></div>
+		<div id="text"></div>
+		<div id="buttons">
+			<span>Tour?</span>
+			<p>Sure! Show me around.</p>
+			<span>Nah!</span>
+			<p>I'm okay.</p>
+		</div>
+	</div>
+	{% endif %}
 		<script type="text/javascript" src="/js/codemirror/codemirror.js"></script>
 		<script type="text/javascript" src="/js/codemirror/mode/python.js"></script>
 		<script type="text/javascript" src="/js/shell.js"></script>
