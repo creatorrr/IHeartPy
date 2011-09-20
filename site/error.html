@@ -56,7 +56,7 @@
 
 		  var touch = event.targetTouches[0];
 		  var el=touch.target;
-		  el.className += el.className ? ' touched' : 'touched';
+		  el.className += (el.className.split(' ',1)=='group') ? ' touched' : 'touched';
 		}, false);
 	document.body.addEventListener('touchend', function(event) {
 

@@ -31,7 +31,7 @@
 		<header>
 		<div class="header">
 			<a href="/"><h1>IHeartPy!</h1></a>
-			<h2> &hearts;The lovable Python Instructor &hearts; </h2>
+			<h2> &hearts;The lovable Python Instructor&hearts; </h2>
 			<blockquote>{{ quotation }} - <em>{{ quotation_author }}</em> <a href="{{ quotation_link }}"> [^] </a> </blockquote>
 			{% if not mobile %}
 			<span id="notifications"> <a href="http://iheartpy.uservoice.com/">Feedback</a> </span>
@@ -111,7 +111,7 @@
 
 		  var touch = event.targetTouches[0];
 		  var el=touch.target;
-		  el.className += el.className ? ' touched' : 'touched';
+		  el.className += (el.className.split(' ',1)=='bar') ? ' touched' : 'touched';
 		}, false);
 	document.body.addEventListener('touchend', function(event) {
 
