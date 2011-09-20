@@ -102,8 +102,23 @@
 		</div>
 		</footer>
   </div> <!--! end of #container -->
+  {% if mobile %}
   <script type="text/javascript">
+	document.body.addEventListener('touchstart', function(event) {
 
+		  var touch = event.targetTouches[0];
+		  var el=touch.target;
+		  el.className += el.className ? ' touched' : 'touched';
+		}, false);
+	document.body.addEventListener('touchend', function(event) {
+
+		  var touch = event.targetTouches[0];
+		  var el=touch.target;
+		  el.className = el.className.split(' ',1);
+		}, false);
+  </script>
+  {% endif %}
+  <script type="text/javascript">
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', '{{analytics_id}}']);
   _gaq.push(['_setDomainName', 'iheartpy.com']);
