@@ -22,8 +22,8 @@
 	<div id="container">
 		<header>
 		<div class="header">
-			<a href="/"><h1>I Heart Py!</h1></a>
-			<h2> &hearts; The lovable Python instructor. &hearts; </h2>
+			<a href="/"><h1>IHeartPy!</h1></a>
+			<h2> &hearts;The lovable Python Instructor&hearts; </h2>
 			<blockquote>A little perspective, like a little humor, goes a long way. - <em> Allen Klein </em></blockquote>
 			<span id="notifications"> <a href=".">Report</a> </span>
 		</div>
@@ -50,6 +50,22 @@
 		</div>
 		</footer>
 	</div> <!--! end of #container -->
+  {% if mobile %}
+  <script type="text/javascript">
+	document.body.addEventListener('touchstart', function(event) {
+
+		  var touch = event.targetTouches[0];
+		  var el=touch.target;
+		  el.className += el.className ? ' touched' : 'touched';
+		}, false);
+	document.body.addEventListener('touchend', function(event) {
+
+		  var touch = event.targetTouches[0];
+		  var el=touch.target;
+		  el.className = el.className.split(' ',1);
+		}, false);
+  </script>
+  {% endif %}
   <script type="text/javascript">
 
   var _gaq = _gaq || [];

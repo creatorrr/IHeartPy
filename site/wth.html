@@ -26,13 +26,17 @@
   <script src="js/libs/modernizr-2.0.6.min.js"></script>
 </head>
 <body class="dark" onmousemove="painter();" onkeyup="painter();" onkeydown="painter();">
+	
+	<a id="prev" onclick="prevSlide();">&laquo;</a>
+	<a id="next" onclick="nextSlide();">&raquo;</a>
+
   <div id="heart" class="slide"></div>
   <div id="container" class="slide">
 		<header>
 		<div class="header">
 			<div>
-				<a href="/"><h1>I Heart Py!</h1></a>
-				<h2> &hearts; The lovable Python instructor. &hearts; </h2>
+				<a href="/"><h1>IHeartPy!</h1></a>
+				<h2> &hearts;The lovable Python Instructor&hearts; </h2>
 			</div>
 			<blockquote class="slide">{{ quotation }} - <em>{{ quotation_author }}</em> </blockquote>
 		</div>
@@ -78,7 +82,7 @@
   </div>
 	<footer>
 	<div class="footer">
-		<span class="instructions light"> Use <em><a onclick="prevSlide();">[&larr;]</a>&nbsp;<a onclick="nextSlide();">[&rarr;]</a></em> to navigate. </span>
+		<span class="instructions light"> Use <em><a onclick="prevSlide();">[&larr;]</a>&nbsp;<a onclick="nextSlide();">[&rarr;]</a></em> keys to navigate. </span>
 	</div>
 	</footer>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>

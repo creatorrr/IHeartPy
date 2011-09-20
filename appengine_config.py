@@ -5,7 +5,6 @@ import re
 from google.appengine.ext.appstats import recording
 
 def webapp_add_wsgi_middleware(app):
-    app = SessionMiddleware(app, cookie_key="s3cr3t")
     app = recording.appstats_wsgi_middleware(app)
     return app
 

@@ -113,11 +113,11 @@ def responder(statement,chat,user):
       reply+='\n#'+(kernel.respond(statement).split('#')[0].replace('\n','\n#'))
   if kernel.respond(chat):
       reply+='\n#'+kernel.respond(chat).replace('\n','\n#')
-#  try:
-#      user.current_lesson = float(kernel.getPredicate('lesson'))
-#      user.put()
-#  except:
-#      logging.warning('Lesson not set')
+  try:
+      user.current_lesson = float(kernel.getPredicate('lesson'))
+      user.put()
+  except:
+      logging.warning('Lesson not set')
   return reply+'\n'
 
 class ShellPageHandler(webapp.RequestHandler):
@@ -125,6 +125,25 @@ class ShellPageHandler(webapp.RequestHandler):
 
   def get(self):
     # set up the session. TODO: garbage collect old shell sessions. Try cron backend.
+
+    _DEFAULT_ROLE = "student"
+    first_time = False
+    user=users.get_current_user()
+    query=ShellUser.all()
+    query.filter("account = ", user)
+    db_user = query.get()
+    
+    if not db_user:
+       #Register the User.
+       first_time = True
+       db_user = ShellUser(name=user.nickname(),
+        									role=_DEFAULT_ROLE,
+        									course_completed = False,
+        									account = user,
+        									email = user.email(),
+      	  								current_lesson = 1.1)
+       db_user.put()
+       logging.info("New user: %s registered" % user.nickname())
 
     session_key = self.request.get('session')
     is_mobile = False
@@ -165,6 +184,7 @@ class ShellPageHandler(webapp.RequestHandler):
              'title': 'Shell',
              'analytics_id':_GA_ID,
              'badge_url': '/badges?email=%s' % users.get_current_user().email(),
+             'first_time':first_time,
              }
     rendered = webapp.template.render(template_file, vars, debug=_DEBUG)
     self.response.out.write(rendered)
@@ -178,22 +198,12 @@ class StatementHandler(webapp.RequestHandler):
     # extract the statement to be run
     
     _DEFAULT_ROLE = "student"
+    first_time = False
     user=users.get_current_user()
     query=ShellUser.all()
     query.filter("account = ", user)
     db_user = query.get()
-    
-    if not db_user:
-       logging.info("New user: %s registered" % user.nickname())
-       db_user = ShellUser(name=user.nickname(),
-        									role=_DEFAULT_ROLE,
-        									course_completed = False,
-        									account = user,
-        									email = user.email(),
-      	  								current_lesson = 1.1)
-       db_user.put()
 
-    
     statement = self.request.get('statement')
     if not statement:
       return

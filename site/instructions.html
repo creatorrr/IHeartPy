@@ -28,9 +28,10 @@
   <div id="container">
 		<header>
 		<div class="header">
-			<a href="/"><h1>I Heart Py!</h1></a>
-			<h2> &hearts; The lovable Python instructor. &hearts; </h2>
+			<a href="/"><h1>IHeartPy!</h1></a>
+			<h2> &hearts;The lovable Python Instructor&hearts; </h2>
 			<blockquote>{{ quotation }} - <em>{{ quotation_author }}</em> <a href="{{ quotation_link }}"> [^] </a> </blockquote>
+			{% if not mobile %}
 			<span id="notifications"> <a href="http://iheartpy.uservoice.com/">Feedback</a> </span>
 			<span id="social"> Share:
 				<a href="https://plus.google.com/103920073326155272540/posts/ToCY78opHnW" target="_blank">+</a>
@@ -38,6 +39,8 @@
 				<a href="https://www.twitter.com/share?url=http://1heartpy.appspot.com/&text=IHeartPy&via=meetdagod" target="_blank">t</a>
 				<a href="javascript:window.location=%22http://news.ycombinator.com/submitlink?u=%22+encodeURIComponent(document.location)+%22&t=%22+encodeURIComponent(document.title)" target="_blank">h</a>
 			</span>
+			{% else %}
+			{% endif %}
 		</div>
 		<header>
 		<hr></hr>
@@ -102,6 +105,22 @@
 		</div>
 		</footer>
   </div> <!--! end of #container -->
+  {% if mobile %}
+  <script type="text/javascript">
+	document.body.addEventListener('touchstart', function(event) {
+
+		  var touch = event.targetTouches[0];
+		  var el=touch.target;
+		  el.className += el.className ? ' touched' : 'touched';
+		}, false);
+	document.body.addEventListener('touchend', function(event) {
+
+		  var touch = event.targetTouches[0];
+		  var el=touch.target;
+		  el.className = el.className.split(' ',1);
+		}, false);
+  </script>
+  {% endif %}
   <script type="text/javascript">
 
   var _gaq = _gaq || [];
