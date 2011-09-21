@@ -87,13 +87,20 @@ That's it for this short primer on variables.
 This is a private beta release and we're adding more awesome lessons daily.
 If you loved it, please send in your comments and feedback.
 
+For a change, try calling author again.
+
 me @ thediwank . in
 
 Thanks.
 Cheerio!
+
+P.s. You can continue to play around of course!
+P.s.s. You have been promoted to Lesson <set name="lesson">1.2</set>.
 </sentence>
 			</template>
 		</category>
+	</topic>
+	<topic name="SUBLESSON2">
 	</topic>
 		<category>
 			<pattern>* EQUALS *</pattern>

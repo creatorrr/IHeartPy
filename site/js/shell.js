@@ -94,7 +94,7 @@ function trim(str){
 				pos.ch=0;
 				shellDisplay.setCursor(pos);
 				shellEditor.focus();
-				window.scrollTo(0,window.innerHeight);
+				window.scrollTo(0,10*window.innerHeight);
 				return true;
 				};
 
@@ -108,7 +108,7 @@ function trim(str){
 				pos.ch=0;
 				shellDisplay.setCursor(pos);
 				shellEditor.focus();
-				window.scrollTo(0,window.innerHeight);
+				window.scrollTo(0,10*window.innerHeight);
 				return true;
 				};
 
@@ -154,7 +154,6 @@ function shellInit(){
 
 		shellEditor.setMarker(gutter.line,gutter.text);
 		shellEditor.focus();
-		shellDisplay.setValue(shellDisplay.getValue()+'\nTo get started, type #Hello and hit enter.\nHappy coding."""');
 		shellDisplay.refresh();
 		//shellClient.runStatement('');
 		}

@@ -22,7 +22,6 @@
 	<link rel="stylesheet" media="screen" href="/css/style.css">
 	<link rel="shortcut icon" href="/favicon.ico">
 	<link rel="apple-touch-icon" href="/apple-touch-icon.png">
-  <script src="js/libs/modernizr-2.0.6.min.js"></script>
 </head>
 <body>
   <div id="container">
@@ -102,20 +101,25 @@
 		</div>
 		</footer>
   </div> <!--! end of #container -->
-  {% if mobile %}
+  {% if iOS %}
   <script type="text/javascript">
-	document.body.addEventListener('touchstart', function(event) {
-
-		  var touch = event.targetTouches[0];
-		  var el=touch.target;
-		  el.className += (el.className.split(' ',1)=='group') ? ' touched' : 'touched';
-		}, false);
-	document.body.addEventListener('touchend', function(event) {
-
-		  var touch = event.targetTouches[0];
-		  var el=touch.target;
-		  el.className = el.className.split(' ',1);
-		}, false);
+  var touchables = ['bar','group']
+  for (classname in touchables)
+  	{for (element in document.getElementsByClassName(classname))
+		{
+		element.addEventListener('touchstart', function(event) {
+				  var touch = event.targetTouches[0];
+				  var el=touch.target;
+				el.id = (el.className.split(' ',1))+ '-touched';
+				}, false);
+		element.addEventListener('touchend', function(event) {
+				  var touch = event.targetTouches[0];
+				  var el=touch.target;
+				  element.id='';
+				  el.id = '';
+				}, false);
+		}
+	}
   </script>
   {% endif %}
   <script type="text/javascript">

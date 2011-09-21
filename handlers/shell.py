@@ -95,7 +95,49 @@ def getQuote():
   """Returns a randomized quotation"""
   libraryFile=open('../site/quotes.txt','r')
   library=libraryFile.readlines()
-  return (random.choice(library)).split(';')
+  return tuple((random.choice(library)).split(';'))
+
+def send_greeting(recipient):
+  from google.appengine.api import mail
+
+  diwank = "Python Lover! <diwank@iheartpy.com>"
+  alternate_addr = "diwank.singh@gmail.com"
+  header = "Happy Coding!"
+  content = """Hi!
+
+Just wrote in to say hello.
+
+Welcome to IHeartPy!
+We hope you love using the service as much as we loved making it a reality.
+
+Feel free to write in.
+We love feedback.
+Just reply back with your thoughts.
+
+Thanks!
+
+Take care.
+
+Diwank
+@IHeartPy
+
+P.s. This was the only time we couldn't resist bothering you!
+Don't worry. We won't spam you.
+Pinky Promise.
+
+"%s"
+ ~ %s
+ %s
+""" % getQuote()
+  
+  try:
+      mail.send_mail(sender = diwank,
+              to = recipient,
+              subject = header,
+              body = content,
+              reply_to = alternate_addr)
+  except:
+      logging.warning('Unable to send greeting email to %s' % recipient)
 
 def responder(statement,chat,user):
   """Lesson Handler"""
@@ -143,6 +185,7 @@ class ShellPageHandler(webapp.RequestHandler):
         									email = user.email(),
       	  								current_lesson = 1.1)
        db_user.put()
+       send_greeting(user.email())
        logging.info("New user: %s registered" % user.nickname())
 
     session_key = self.request.get('session')
@@ -212,8 +255,6 @@ class StatementHandler(webapp.RequestHandler):
     statement = statement.replace('\r\n', '\n')
     is_mobile = False
 
-    reply=''
-    chat=(''.join([statement,'#']).split('#')[1])
 
     # add a couple newlines at the end of the statement. this makes
     # single-line expressions such as 'class Foo: pass' evaluate happily.
@@ -229,6 +270,10 @@ class StatementHandler(webapp.RequestHandler):
     if lol == '1':
       statement = lolpython.to_python(statement)
       import sys as _lol_sys
+      statement=statement.strip()
+
+    reply=''
+    chat=(''.join([statement,'#']).split('#')[1])
 
     self.response.clear()
 
@@ -349,7 +394,10 @@ class LogoutHandler(webapp.RequestHandler):
     if session_key:
       session = Session.get(session_key)
 
-    session.delete()
+    if session:
+      session.delete()
+      logging.info('Session Deleted')
+
     self.redirect("https://docs.google.com/spreadsheet/viewform?formkey=dG5OSlBTTGJrYUVjVjloRXhjYlE3c2c6MQ")
 
 

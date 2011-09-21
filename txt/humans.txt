@@ -25,8 +25,9 @@
                 Cort Stratton (http://pyaiml.sourceforge.net/),
                 Marijn Haverbeke (http://github.com/marijnh/CodeMirror2)
                 Paul Irish (http://github.com/paulirish/HTML5-Boilerplate)
+                Caleb Troughton (http://imakewebthings.github.com/deck.js/)
 
 /* SITE */
   Standards: HTML5, CSS3
-  Components: HTML5-Boilerplate, CodeMirror
+  Components: HTML5-Boilerplate, CodeMirror, Deck.js
   Software: Python, App-Engine, PyAIML

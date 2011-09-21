@@ -16,7 +16,6 @@
 	<link rel="stylesheet" media="screen" href="/css/style.css">
 	<link rel="shortcut icon" href="/favicon.ico">
 	<link rel="apple-touch-icon" href="/apple-touch-icon.png">
-  <script src="js/libs/modernizr-2.0.6.min.js"></script>
 </head>
 	<body>
 	<div id="container">
@@ -30,7 +29,7 @@
 		<hr></hr>
 		<div id="main" role="main">
 		<div class="error">
-			<span>This is to certify that</span><br/>'{{awardee}}'<br/><span>is now officially a Python</span>	<br/>{{award}}!<br/>
+			<span>This is to certify that</span><br/>'{{awardee}}'<br/><span>is now officially a Python</span>	<br/><a href="/instructions">{{award}}!</a><br/>
 			<div id="sharer">
 								<a href="https://plus.google.com/" target="_blank">+</a>
 				<a href="http://www.facebook.com/sharer.php?s=100&p[title]=IHeartPy&p[url]={{badge_url}}&p[summary]={{awardee}}-OFFICIALLY-A-PYTHON-{{award}}!!" target="_blank">f</a>
@@ -53,22 +52,6 @@
 		</div>
 		</footer>
 	</div> <!--! end of #container -->
-  {% if mobile %}
-  <script type="text/javascript">
-	document.body.addEventListener('touchstart', function(event) {
-
-		  var touch = event.targetTouches[0];
-		  var el=touch.target;
-		  el.className += el.className ? ' touched' : 'touched';
-		}, false);
-	document.body.addEventListener('touchend', function(event) {
-
-		  var touch = event.targetTouches[0];
-		  var el=touch.target;
-		  el.className = el.className.split(' ',1);
-		}, false);
-  </script>
-  {% endif %}
   <script type="text/javascript">
 
   var _gaq = _gaq || [];

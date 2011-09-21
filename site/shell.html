@@ -29,7 +29,6 @@
 	<link rel="shortcut icon" href="/favicon.ico">
 	<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 	<link rel="apple-touch-startup-image" href="/apple-touch-icon.png">
-  		<script src="js/libs/modernizr-2.0.6.min.js"></script>
 	</head>
 	<body onload="shellInit();return false;">
 	<div id="container">
@@ -58,6 +57,9 @@ Python {{ python_version }}
 Type python commands below and hit Enter.
 For new lines hit: Shift+Enter
 For Undo or Redo: Use Ctrl+ Up or Down
+To get started, type #Hello and hit enter.
+
+Happy coding."""
 </textarea></form>
 			<span id="shellLOL1" class="off" onclick="toggleLOL();return false;">LOL</span><span class="off" onclick="toggleTheme();return false;">theme</span><span onclick="printer(shellDisplay.getValue());" class="off">print</span><span onclick="shellDisplay.setValue('');return false;" class="off">clear</span>
 			<form class="prompt" id="shell-prompt"><textarea id="prompt">#Hello</textarea></form>
