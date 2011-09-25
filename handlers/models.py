@@ -23,16 +23,11 @@ except ImportError:
 
 class ShellUser(db.Model):
   """Holds user properties."""
-  
+
   name = db.StringProperty(required=True)
-  role = db.StringProperty(required=True, choices=set(["admin", "tester", "student"]), indexed=False)
-  first_access_date = db.DateProperty(auto_now_add=True, indexed=False)
-  last_access_date = db.DateProperty(auto_now=True, indexed=False)
-  course_completed = db.BooleanProperty(required=True, indexed=False)
   account = db.UserProperty(required=True)
   email = db.EmailProperty(required=True)
   current_lesson = db.FloatProperty(required=True, indexed=False)
-  im_handle = db.IMProperty(indexed=False)
 
 class Session(db.Model):
   """A shell session. Stores the session's globals.
@@ -57,7 +52,6 @@ class Session(db.Model):
   these properties, so they don't need to be indexed.
   """
   
-  email = db.EmailProperty(required=True)
   global_names = db.ListProperty(db.Text, indexed=False)
   globals = db.ListProperty(db.Blob, indexed=False)
   unpicklable_names = db.ListProperty(db.Text, indexed=False)

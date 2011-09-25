@@ -56,7 +56,7 @@ class PageHandler(webapp.RequestHandler):
 
     uagent = self.request.user_agent.lower()
     mobile = False
-    if "mobi" in uagent:
+    if ("mobi" in uagent) or ("mini" in uagent):
         mobile = True
 
     iOS = False

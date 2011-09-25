@@ -137,7 +137,7 @@ Pinky Promise.
               body = content,
               reply_to = alternate_addr)
   except:
-      logging.warning('Unable to send greeting email to %s' % recipient)
+      logging.warning('Unable to send greeting email.')
 
 def responder(statement,chat,user):
   """Lesson Handler"""
@@ -168,22 +168,21 @@ class ShellPageHandler(webapp.RequestHandler):
   def get(self):
     # set up the session. TODO: garbage collect old shell sessions. Try cron backend.
 
-    _DEFAULT_ROLE = "student"
     first_time = False
     user=users.get_current_user()
     query=ShellUser.all()
     query.filter("account = ", user)
     db_user = query.get()
     
+    uagent = self.request.user_agent.lower()
+    
     if not db_user:
        #Register the User.
        first_time = True
        db_user = ShellUser(name=user.nickname(),
-        									role=_DEFAULT_ROLE,
-        									course_completed = False,
-        									account = user,
-        									email = user.email(),
-      	  								current_lesson = 1.1)
+							account = user,
+							email = user.email(),
+							current_lesson = 1.1)
        db_user.put()
        send_greeting(user.email())
        logging.info("New user: %s registered" % user.nickname())
@@ -194,13 +193,13 @@ class ShellPageHandler(webapp.RequestHandler):
       session = Session.get(session_key)
     else:
       # create a new session
-      session = Session(email = users.get_current_user().email())
+      session = Session()
       session.unpicklables = [db.Text(line) for line in INITIAL_UNPICKLABLES]
       session_key = session.put()
 
     template_file = os.path.abspath('../site/shell.html')
     
-    if "mobi" in self.request.user_agent.lower():
+    if ("mobi" in uagent) or ("mini" in uagent):
         is_mobile = True
     
     if is_mobile:
@@ -233,14 +232,47 @@ class ShellPageHandler(webapp.RequestHandler):
     self.response.out.write(rendered)
 
 
+class HangoutHandler(webapp.RequestHandler):
+  """Handles hanoguts!"""
+
+  def get(self):
+    # set up the session. 
+
+    session_key = self.request.get('session')
+    is_mobile = False
+    if session_key:
+      session = Session.get(session_key)
+    else:
+      # create a new session
+      session = Session()
+      session.unpicklables = [db.Text(line) for line in INITIAL_UNPICKLABLES]
+      session_key = session.put()
+
+    template_file = os.path.abspath('../site/hangouts.xml')
+
+    quote=getQuote()
+    
+    greetings = "To get started, type #Hello and hit enter.\n"
+    
+    vars = { 'session': str(session_key),
+             'greetings': greetings,
+             'quotation': quote[0],
+             'quotation_author': quote[1],
+             'quotation_link': quote[2],
+             }
+
+    self.response.headers['Content-Type'] = 'text/xml'		#HANGOUTS require xml files!
+    rendered = webapp.template.render(template_file, vars, debug=_DEBUG)
+    self.response.out.write(rendered)
+
+
 class StatementHandler(webapp.RequestHandler):
   """Evaluates a python statement in a given session and returns the result."""
 
-  @login_required
+  @login_required		#SHIT! TODO: Try and see if login works inside of Hangouts....
   def get(self):
     # extract the statement to be run
     
-    _DEFAULT_ROLE = "student"
     first_time = False
     user=users.get_current_user()
     query=ShellUser.all()
@@ -255,12 +287,13 @@ class StatementHandler(webapp.RequestHandler):
     statement = statement.replace('\r\n', '\n')
     is_mobile = False
 
+    uagent = self.request.user_agent.lower()
 
     # add a couple newlines at the end of the statement. this makes
     # single-line expressions such as 'class Foo: pass' evaluate happily.
     statement += '\n'
     
-    if "mobi" in self.request.user_agent.lower():
+    if ("mobi" in uagent) or ("mini" in uagent):
         is_mobile = True
     
     mobile_template=[os.path.abspath('../site/mobile.part.html'),os.path.abspath('../site/mobile.part2.html')]
@@ -290,7 +323,6 @@ class StatementHandler(webapp.RequestHandler):
 
     # log and compile the statement up front
     try:
-      logging.info('Compiling and evaluating:\n%s' % statement)
       if statement.strip():
           compiled = compile(statement, '<string>', 'single')
     except:
@@ -361,7 +393,6 @@ class StatementHandler(webapp.RequestHandler):
         # this statement added an unpicklable global. store the statement and
         # the names of all of the globals it added in the unpicklables.
         session.add_unpicklable(statement, new_globals.keys())
-        logging.debug('Storing this statement as an unpicklable.')
 
       else:
         # this statement didn't add any unpicklables. pickle and store the
@@ -383,6 +414,135 @@ class StatementHandler(webapp.RequestHandler):
         self.response.out.write(session_id)
         self.response.out.write(open(mobile_template[1]).read())
     session.put()
+    
+  def post(self):
+    # extract the statement to be run. RUNNING IN HANGOUT.
+
+    if not self.request.get('hangouts'):
+        return
+
+    statement = self.request.get('statement')
+    if not statement:
+      return
+
+    # the python compiler doesn't like network line endings
+    statement = statement.replace('\r\n', '\n')
+    is_mobile = False
+
+
+    # add a couple newlines at the end of the statement. this makes
+    # single-line expressions such as 'class Foo: pass' evaluate happily.
+    statement += '\n'
+    
+
+    lol = self.request.get('lol')
+    if lol == '1':
+      statement = lolpython.to_python(statement)
+      import sys as _lol_sys
+      statement=statement.strip()
+
+    reply=''
+    chat=(''.join([statement,'#']).split('#')[1])
+
+    self.response.clear()
+
+    self.response.headers['Content-Type'] = 'text/text'
+    self.response.out.write(statement)
+    
+    statement = statement.split('#')[0] #TODO: change this.
+    reply=responder(statement,chat,db_user)
+
+    # log and compile the statement up front
+    try:
+      if statement.strip():
+          compiled = compile(statement, '<string>', 'single')
+    except:
+      self.response.out.write(traceback.format_exc())
+      self.response.out.write(responder('some stupid error','',db_user))
+      return
+
+    # create a dedicated module to be used as this statement's __main__
+    statement_module = new.module('__main__')
+
+    # use this request's __builtin__, since it changes on each request.
+    # this is needed for import statements, among other things.
+    import __builtin__
+    statement_module.__builtins__ = __builtin__
+
+    # load the session from the datastore
+    session_id = self.request.get('session')
+    session = Session.get(session_id)
+
+    # swap in our custom module for __main__. then unpickle the session
+    # globals, run the statement, and re-pickle the session globals, all
+    # inside it.
+    old_main = sys.modules.get('__main__')
+    try:
+      sys.modules['__main__'] = statement_module
+      statement_module.__name__ = '__main__'
+
+      # re-evaluate the unpicklables
+      for code in session.unpicklables:
+        exec code in statement_module.__dict__
+
+      # re-initialize the globals
+      for name, val in session.globals_dict().items():
+        try:
+          statement_module.__dict__[name] = val
+        except:
+          msg = 'Dropping %s since it could not be unpickled.\n' % name
+          self.response.out.write(msg)
+          logging.warning(msg + traceback.format_exc())
+          session.remove_global(name)
+
+      # run!
+      old_globals = dict(statement_module.__dict__)
+      try:
+        old_stdout = sys.stdout
+        old_stderr = sys.stderr
+        try:
+          sys.stdout = self.response.out
+          sys.stderr = self.response.out
+          if statement.strip():
+                exec compiled in statement_module.__dict__
+        finally:
+          sys.stdout = old_stdout
+          sys.stderr = old_stderr
+      except:
+        self.response.out.write(traceback.format_exc())
+        self.response.out.write(responder('some stupid error','',db_user))
+        return
+
+      # extract the new globals that this statement added
+      new_globals = {}
+      for name, val in statement_module.__dict__.items():
+        if name not in old_globals or val != old_globals[name]:
+          new_globals[name] = val
+
+      if True in [isinstance(val, UNPICKLABLE_TYPES)
+                  for val in new_globals.values()]:
+        # this statement added an unpicklable global. store the statement and
+        # the names of all of the globals it added in the unpicklables.
+        session.add_unpicklable(statement, new_globals.keys())
+
+      else:
+        # this statement didn't add any unpicklables. pickle and store the
+        # new globals back into the datastore.
+        session.set_global('help', 'Use the instructions link at the bottom for more info.')
+        session.set_global('author', 'Diwank Singh')
+        session.set_global('about', 'The friendly Python Instructor')
+        session.set_global('inspiration', 'Ila Nitin Gokarn')
+        for name, val in new_globals.items():
+          if not name.startswith('__'):
+            session.set_global(name, val)
+
+    finally:
+      sys.modules['__main__'] = old_main
+
+    self.response.out.write(reply)
+    session.put()
+
+
 
 
 class LogoutHandler(webapp.RequestHandler):
@@ -396,7 +556,6 @@ class LogoutHandler(webapp.RequestHandler):
 
     if session:
       session.delete()
-      logging.info('Session Deleted')
 
     self.redirect("https://docs.google.com/spreadsheet/viewform?formkey=dG5OSlBTTGJrYUVjVjloRXhjYlE3c2c6MQ")
 
@@ -405,7 +564,8 @@ def main():
   application = webapp.WSGIApplication(
     [('/shell', ShellPageHandler),
      ('/shell.do', StatementHandler),
-     ('/shell.delete', LogoutHandler)], debug=_DEBUG)
+     ('/shell.delete', LogoutHandler),
+     ('/hangouts', HangoutHandler)], debug=_DEBUG)		#ADDED Hangout supprt
   wsgiref.handlers.CGIHandler().run(application)
 
 
@@ -413,7 +573,7 @@ if __name__ == '__main__':
   main()
 
 
-def is_it_fucking_christmas(yes=False):
+def is_it_fucking_christmas(yes=False):				
 	"""Is it Fucking Christmas?
 	IS IT FUCKINGGG CHRISTMAS????"""
 	

@@ -32,6 +32,9 @@ handlers:
   login: required
   auth_fail_action: redirect
 
+- url: /hangouts
+  script: handlers/shell.py
+
 - url: /shell.do
   script: handlers/shell.py
   login: required
