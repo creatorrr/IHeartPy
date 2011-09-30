@@ -51,13 +51,12 @@
 		<div class="editor">
 			<h3> Python Interactive Shell </h3>
 			<span id="shellLOL" class="off" onclick="toggleLOL();return false;">LOL</span><span class="off" onclick="toggleTheme();return false;">theme</span><span onclick="printer(shellDisplay.getValue());" class="off">print</span><span onclick="shellDisplay.setValue('');return false;" class="off">clear</span>
-			<form class="display" id="shell-display"><textarea id="display" readonly>{{ server_software }}
-Python {{ python_version }}
-"""Welcome to IHeartPy console.
+			<form class="display" id="shell-display"><textarea id="display" readonly>Python {{ python_version }}
+"""Welcome to IHeartPy!
 Type python commands below and hit Enter.
-For new lines hit: Shift+Enter
+For inserting a new line: Shift+Enter
 For Undo or Redo: Use Ctrl+ Up or Down
-To get started, type #Hello and hit enter.
+{{ greetings }}
 
 Happy coding."""
 </textarea></form>

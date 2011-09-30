@@ -94,8 +94,7 @@ function trim(str){
 				pos.ch=0;
 				shellDisplay.setCursor(pos);
 				shellEditor.focus();
-				window.scrollTo(0,10*window.innerHeight);
-				window.scrollTo(0,10*window.innerHeight);
+				window.scrollTo(0,100*window.innerHeight);
 				return true;
 				};
 

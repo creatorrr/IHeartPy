@@ -210,7 +210,7 @@ class ShellPageHandler(webapp.RequestHandler):
 
     notifications="Feedback."
     
-    greetings = "To get started, type #Hello and hit enter.\n"
+    greetings = "To get started, type #Hello and hit enter."
     
     vars = { 'server_software': os.environ['SERVER_SOFTWARE'],
              'python_version': sys.version,
